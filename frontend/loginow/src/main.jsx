@@ -6,11 +6,12 @@ import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import LandingPage from './pages/landingPage.jsx'
 import Login from './pages/login.jsx'
 import Register from './pages/register.jsx'
-import Dashboard from './pages/dashboard.jsx'
+import Dashboard from './pages/Dashboard.jsx'
 import FindFreight from './pages/findFreight.jsx'
 import PostFreight from './pages/postFreight.jsx'
 import FindTruck from './pages/findTruck.jsx'
 import PostTruck from './pages/postTruck.jsx'
+import myAccount from './pages/myAccount.jsx'
 
 const router = createBrowserRouter([
   {path: '/', element: <LandingPage />},
@@ -20,7 +21,8 @@ const router = createBrowserRouter([
   {path: '/findfreight', element: <FindFreight />},
   {path: '/postfreight', element: <PostFreight />},
   {path: '/findtruck', element: <FindTruck />},
-  {path: '/posttruck', element: <PostTruck />}
+  {path: '/posttruck', element: <PostTruck />},
+  {path: '/myaccount', element: <myAccount />},
 ]);
 
 /* Router me routes te mbrojtura masi te implementojme back-endin dhe autentifikimin
@@ -37,6 +39,7 @@ const router = createBrowserRouter([
       { path: "/postfreight", element: <PostFreight /> },
       { path: "/findtruck", element: <FindTruck /> },
       { path: "/posttruck", element: <PostTruck /> },
+      { path: "/myaccount", element: <myAccount /> },
     ],
   },
 ]);
