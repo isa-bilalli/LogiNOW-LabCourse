@@ -1,4 +1,4 @@
-function myAccount() {
+function MyAccount() {
     return (
         <div>
             <h1>My Account</h1>
@@ -6,4 +6,4 @@ function myAccount() {
     );
 }
 
-export default myAccount;
+export default MyAccount;
