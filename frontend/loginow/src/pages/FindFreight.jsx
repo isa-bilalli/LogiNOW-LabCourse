@@ -96,16 +96,9 @@ function FindFreight() {
     <div className="flex min-h-screen bg-white">
       <Navbar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-50">
         <div className="flex-1 p-8">
           <div className="max-w-6xl mx-auto">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold text-gray-800">Find Freight</h1>
-              <p className="text-gray-600 mt-1">
-                Gjej ngarkesa te disponueshme per transportim
-              </p>
-            </div>
-
             <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8 mb-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-6">
                 Search Criteria

@@ -2,7 +2,7 @@ import { Link, NavLink } from 'react-router-dom';
 
 function Navbar() {
   return (
-    <nav className="bg-[#D9D9D9] w-50 min-h-screen flex flex-col items-center pt-4 px-4">
+    <nav className="bg-[#D9D9D9] fixed top-0 left-0 w-50 h-screen flex flex-col items-center pt-4 px-4">
       <img src="/src/assets/LogiNOW_WHITE-removebg-preview.png" className="w-36 sm:w-40 md:w-44 h-auto mb-10" alt="Logo"/>
       <div className="flex flex-col w-full space-y-6">
         <NavLink to="/dashboard" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>Dashboard</NavLink>
