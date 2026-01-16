@@ -92,15 +92,9 @@ return (
 
 
   {/* Main Content */}
-  <div className="flex-1 flex flex-col">
+  <div className="flex-1 flex flex-col ml-50">
     <div className="flex-1 p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Page Title */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Find Truck</h1>
-          <p className="text-gray-600 mt-1">Gjej kamionin e pershtatshem per ngarkesen tende</p>
-        </div>
-
         {/* Search Form Card */}
         <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8 mb-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Search Criteria</h2>
@@ -110,7 +104,7 @@ return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Origin */}
               <div>
-                <label htmlFor="origin" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="origin" className="block text-sm font-medium text-black mb-2">
                   Origin
                 </label>
                 <input
