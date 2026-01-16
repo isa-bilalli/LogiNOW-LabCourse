@@ -41,8 +41,8 @@ function PostFreight() {
       <Navbar />
 
       <div className="flex-1 flex flex-col">
-        <div className="flex-1 p-8">
-          <div className="max-w-6xl mx-auto">
+        <div className="flex-1 p-8 pl-16 pr-16">
+          <div className="max-w-5xl mx-auto">
             <div className="mb-6">
               <h1 className="text-3xl font-bold text-gray-800">Post Freight</h1>
               <p className="text-gray-600 mt-1">
