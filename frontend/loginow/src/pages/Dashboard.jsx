@@ -1,18 +1,74 @@
+import React from 'react';
 import Navbar from '../components/Navbar';
-import {checkHealth} from '../api.js'
-import { useEffect } from 'react';
 
-function Dashboard () {
-    
-    useEffect(() => {
-        checkHealth();
-    });
+function Dashboard() {
+  // Sample empty arrays for cards (5 cards each)
+  const postedTrucks = Array(5).fill(null);
+  const postedFreight = Array(5).fill(null);
 
-    return (
-    <>
-        <Navbar />
-    </>
-    )
+  return (
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Page Header */}
+        <div className="bg-white shadow-sm px-8 py-4 border-b border-gray-200">
+          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 p-6">
+          <div className="ml-auto mr-8 max-w-5xl space-y-6">
+            
+            {/* Two Column Layout for Posted Trucks and Posted Freight */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              
+              {/* Posted Trucks Section */}
+              <div className="bg-white rounded-lg shadow p-4">
+                <h2 className="text-xl font-bold text-gray-800 mb-3">
+                  Posted Trucks
+                </h2>
+                <div className="space-y-2">
+                  {postedTrucks.map((_, index) => (
+                    <div
+                      key={index}
+                      className="h-16 bg-gray-100 border border-gray-200 rounded"
+                    ></div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Posted Freight Section */}
+              <div className="bg-white rounded-lg shadow p-4">
+                <h2 className="text-xl font-bold text-gray-800 mb-3">
+                  Posted Freight
+                </h2>
+                <div className="space-y-2">
+                  {postedFreight.map((_, index) => (
+                    <div
+                      key={index}
+                      className="h-16 bg-gray-100 border border-gray-200 rounded"
+                    ></div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Coming Soon Banner */}
+            <div className="bg-[#7ED957] rounded-lg shadow p-12 text-center">
+              <p className="text-3xl font-bold text-white">
+                Stay tuned, More is coming
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Dashboard;
