@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../components/Navbar';
 
 function Dashboard() {
@@ -23,7 +22,7 @@ function Dashboard() {
               
               {/* Posted Trucks Section */}
               <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="text-xl font-bold text-gray-800 mb-3 select-none">
+                <h2 className="text-xl font-bold text-black mb-3 select-none text-center">
                   Posted Trucks
                 </h2>
                 <div className="space-y-2">
@@ -38,7 +37,7 @@ function Dashboard() {
 
               {/* Posted Freight Section */}
               <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="text-xl font-bold text-gray-800 mb-3 select-none">
+                <h2 className="text-xl font-bold text-black mb-3 select-none text-center">
                   Posted Freight
                 </h2>
                 <div className="space-y-2">
@@ -54,7 +53,7 @@ function Dashboard() {
             </div>
 
             {/* Coming Soon Banner */}
-            <div className="bg-[#7ED957] rounded-lg shadow p-12 text-center">
+            <div className="bg-[#7ED957] rounded-lg shadow p-12 mt-10 text-center">
               <p className="text-3xl font-bold text-white select-none">
                 Stay tuned, More is coming
               </p>

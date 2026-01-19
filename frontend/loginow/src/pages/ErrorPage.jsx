@@ -10,7 +10,7 @@ function ErrorPage() {
                 <img src={logo} className="w-60 select-none pointer-events-none"/>
                 <h1 className="text-2xl">Oops!</h1>
                 <p className="text-2xl">Something went wrong.<br/> Error:</p>
-                <p className="text-2xl font-bold"><i>{error?.statusText || error?.message}</i></p>
+                <p className="text-2xl font-bold mt-4"><i>{error?.statusText || error?.message}</i></p>
             </div>
         </div>
     );

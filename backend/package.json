@@ -11,9 +11,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node src/app.js"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "mysql2": "^3.16.1"
   }
 }
