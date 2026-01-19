@@ -3,8 +3,8 @@ import Navbar from '../components/Navbar';
 
 function Dashboard() {
   // Sample empty arrays for cards (5 cards each)
-  const postedTrucks = Array(5).fill(null);
-  const postedFreight = Array(5).fill(null);
+  const postedTrucks = Array(6).fill(null);
+  const postedFreight = Array(6).fill(null);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -13,21 +13,17 @@ function Dashboard() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Page Header */}
-        <div className="bg-white shadow-sm px-8 py-4 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        </div>
 
         {/* Content Area */}
         <div className="flex-1 p-6">
-          <div className="ml-auto mr-8 max-w-5xl space-y-6">
+          <div className="max-w-8xl space-y-6 sm:ml-50 md:ml-50 lg:ml-50">
             
             {/* Two Column Layout for Posted Trucks and Posted Freight */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               
               {/* Posted Trucks Section */}
               <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="text-xl font-bold text-gray-800 mb-3">
+                <h2 className="text-xl font-bold text-gray-800 mb-3 select-none">
                   Posted Trucks
                 </h2>
                 <div className="space-y-2">
@@ -42,7 +38,7 @@ function Dashboard() {
 
               {/* Posted Freight Section */}
               <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="text-xl font-bold text-gray-800 mb-3">
+                <h2 className="text-xl font-bold text-gray-800 mb-3 select-none">
                   Posted Freight
                 </h2>
                 <div className="space-y-2">
@@ -59,7 +55,7 @@ function Dashboard() {
 
             {/* Coming Soon Banner */}
             <div className="bg-[#7ED957] rounded-lg shadow p-12 text-center">
-              <p className="text-3xl font-bold text-white">
+              <p className="text-3xl font-bold text-white select-none">
                 Stay tuned, More is coming
               </p>
             </div>

@@ -37,28 +37,21 @@ function PostFreight() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-white ml-50">
       <Navbar />
 
       <div className="flex-1 flex flex-col">
         <div className="flex-1 p-8 pl-16 pr-16">
           <div className="max-w-5xl mx-auto">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold text-gray-800">Post Freight</h1>
-              <p className="text-gray-600 mt-1">
-                Posto ngarkesen tende per transport
-              </p>
-            </div>
-
             <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8 mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">
+              <h2 className="text-xl font-semibold text-black mb-6">
                 Freight Details
               </h2>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="origin" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="origin" className="block text-sm font-medium text-black mb-2">
                        Pickup Location
                     </label>
                     <input
@@ -73,7 +66,7 @@ function PostFreight() {
                   </div>
 
                   <div>
-                    <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="destination" className="block text-sm font-medium text-black mb-2">
                        Delivery Location
                     </label>
                     <input
@@ -88,7 +81,7 @@ function PostFreight() {
                   </div>
 
                   <div>
-                    <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="date" className="block text-sm font-medium text-black mb-2">
                        Pickup Date
                     </label>
                     <input
@@ -102,7 +95,7 @@ function PostFreight() {
                   </div>
 
                   <div>
-                    <label htmlFor="freightType" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="freightType" className="block text-sm font-medium text-black mb-2">
                        Freight Type
                     </label>
                     <select
@@ -123,7 +116,7 @@ function PostFreight() {
                   </div>
 
                   <div>
-                    <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="weight" className="block text-sm font-medium text-black mb-2">
                        Weight
                     </label>
                     <input
@@ -138,7 +131,7 @@ function PostFreight() {
                   </div>
 
                   <div>
-                    <label htmlFor="payment" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="payment" className="block text-sm font-medium text-black mb-2">
                        Payment Offered
                     </label>
                     <input
@@ -153,7 +146,7 @@ function PostFreight() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="description" className="block text-sm font-medium text-black mb-2">
                        Description
                     </label>
                     <textarea
@@ -190,7 +183,7 @@ function PostFreight() {
               <div className="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 text-5xl">
                 📦
               </div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              <h3 className="text-xl font-semibold text-black mb-2">
                 Ready to Post?
               </h3>
               <p className="text-gray-600">
