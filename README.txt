@@ -3,7 +3,8 @@ Si te fillojme projektin :
 Ne Terminal shkruaj
 
 1. cd backend
-2. node index.js
+2. cd src
+3. node app.js
 
 Prite mesazhin : Backend started on port http://localhost:3000
 
