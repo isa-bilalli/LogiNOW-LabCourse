@@ -96,7 +96,7 @@ function PostFreight() {
 
                   <div>
                     <label htmlFor="freightType" className="block text-sm font-medium text-black mb-2">
-                       Freight Type
+                       Van Type
                     </label>
                     <select
                       id="freightType"

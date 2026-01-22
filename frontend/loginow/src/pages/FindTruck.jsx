@@ -152,7 +152,7 @@ return (
               {/* Truck Type */}
               <div>
                 <label htmlFor="truckType" className="block text-sm font-medium text-gray-700 mb-2">
-                  Truck Type
+                  Van Type
                 </label>
                 <select
                   id="truckType"

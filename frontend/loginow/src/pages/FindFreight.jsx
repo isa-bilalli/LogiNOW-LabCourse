@@ -152,7 +152,7 @@ function FindFreight() {
 
                   <div>
                     <label htmlFor="freightType" className="block text-sm font-medium text-gray-700 mb-2">
-                       Freight Type
+                       Van Type
                     </label>
                     <select
                       id="freightType"

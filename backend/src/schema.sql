@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS truck(
 
 CREATE TABLE IF NOT EXISTS freight(
     freightID INT AUTO_INCREMENT PRIMARY KEY,
+    price INT NOT NULL,
     currentLocation VARCHAR(50) NOT NULL,
     destination VARCHAR(50) NOT NULL,
     truckType VARCHAR(50) NOT NULL,

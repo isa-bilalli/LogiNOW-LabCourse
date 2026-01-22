@@ -96,7 +96,7 @@ function PostTruck() {
 
                   <div>
                     <label htmlFor="truckType" className="block text-sm font-medium text-black mb-2">
-                       Truck Type
+                       Van Type
                     </label>
                     <select
                       id="truckType"
