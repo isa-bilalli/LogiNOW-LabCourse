@@ -3,13 +3,10 @@ import { useState } from 'react';
 
 function PostTruck() {
   const [formData, setFormData] = useState({
-    origin: '',
-    destination: '',
+    currentLocation: '',
     date: '',
     truckType: '',
-    capacity: '',
-    price: '',
-    description: ''
+    maxWeight: ''
   });
 
   const handleChange = (e) => {
@@ -26,13 +23,10 @@ function PostTruck() {
 
   const handleReset = () => {
     setFormData({
-      origin: '',
-      destination: '',
+      currentLocation: '',
       date: '',
       truckType: '',
-      capacity: '',
-      price: '',
-      description: ''
+      maxWeight: ''
     });
   };
 
@@ -51,14 +45,14 @@ function PostTruck() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="origin" className="block text-sm font-medium text-black mb-2">
-                       Origin
+                    <label htmlFor="currentLocation" className="block text-sm font-medium text-black mb-2">
+                      Current Location
                     </label>
                     <input
                       type="text"
-                      id="origin"
-                      name="origin"
-                      value={formData.origin}
+                      id="currentLocation"
+                      name="currentLocation"
+                      value={formData.currentLocation}
                       onChange={handleChange}
                       placeholder="Prishtine, Kosove"
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
@@ -66,23 +60,8 @@ function PostTruck() {
                   </div>
 
                   <div>
-                    <label htmlFor="destination" className="block text-sm font-medium text-black mb-2">
-                       Destination
-                    </label>
-                    <input
-                      type="text"
-                      id="destination"
-                      name="destination"
-                      value={formData.destination}
-                      onChange={handleChange}
-                      placeholder="Tirane, Shqiperi"
-                      className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
                     <label htmlFor="date" className="block text-sm font-medium text-black mb-2">
-                       Date
+                      Date Available
                     </label>
                     <input
                       type="date"
@@ -96,7 +75,7 @@ function PostTruck() {
 
                   <div>
                     <label htmlFor="truckType" className="block text-sm font-medium text-black mb-2">
-                       Van Type
+                      Van Type
                     </label>
                     <select
                       id="truckType"
@@ -106,55 +85,29 @@ function PostTruck() {
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
                     >
                       <option value="">Zgjidh llojin</option>
-                      <option value="box">Box Truck</option>
-                      <option value="flatbed">Flatbed</option>
-                      <option value="refrigerated">Refrigerated</option>
-                      <option value="tanker">Tanker</option>
+                      <option value="Dry Van">Dry Van</option>
+                      <option value="Reefer">Reefer</option>
+                      <option value="Tarpauliner">Tarpauliner</option>
+                      <option value="Flatbed">Flatbed</option>
+                      <option value="Stepdeck">Stepdeck</option>
+                      <option value="Lowboy">Lowboy</option>
+                      <option value="Tanker">Tanker</option>
+                      <option value="Car Carrier">Car Carrier</option>
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="capacity" className="block text-sm font-medium text-black mb-2">
-                       Capacity
+                    <label htmlFor="maxWeight" className="block text-sm font-medium text-black mb-2">
+                      Max Weight (kg)
                     </label>
                     <input
-                      type="text"
-                      id="capacity"
-                      name="capacity"
-                      value={formData.capacity}
+                      type="number"
+                      id="maxWeight"
+                      name="maxWeight"
+                      value={formData.maxWeight}
                       onChange={handleChange}
-                      placeholder="5000 kg"
+                      placeholder="5000"
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="price" className="block text-sm font-medium text-black mb-2">
-                       Price
-                    </label>
-                    <input
-                      type="text"
-                      id="price"
-                      name="price"
-                      value={formData.price}
-                      onChange={handleChange}
-                      placeholder="€450"
-                      className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label htmlFor="description" className="block text-sm font-medium text-black mb-2">
-                       Description
-                    </label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      placeholder="Pershkruaj detaje shtese per kamionin..."
-                      rows="4"
-                      className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none resize-none"
                     />
                   </div>
                 </div>
@@ -164,7 +117,7 @@ function PostTruck() {
                     onClick={handleSubmit}
                     className="px-6 py-2.5 bg-[#7ED957] text-white font-medium rounded-lg hover:bg-[#6bc245] transition-colors shadow-sm"
                   >
-                     Post Truck
+                    Post Truck
                   </button>
 
                   <button
@@ -182,10 +135,10 @@ function PostTruck() {
                 🚚
               </div>
               <h3 className="text-xl font-semibold text-black mb-2">
-                Ready to Post?
+                My Posted Trucks
               </h3>
               <p className="text-gray-600">
-                Ploteso formen me lart per te postuar kamionin tend
+                Kamionet e postuar do te shfaqen ketu
               </p>
             </div>
           </div>
