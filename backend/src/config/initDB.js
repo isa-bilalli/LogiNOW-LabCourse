@@ -40,7 +40,8 @@ async function initSchema() {
     await connection.query(`USE \`${DB_NAME}\`;`);
 
     // Lexon schema.sql dhe e ndan ate ne statements te ekzekutueshem
-    const schema = fs.readFileSync("./schema.sql", "utf-8");
+    const schemaPath = path.resolve(__dirname, '../schema.sql');
+    const schema = fs.readFileSync(schemaPath, "utf-8");
     const statements = schema
       .split(";")
       .map(stmt => stmt.trim())

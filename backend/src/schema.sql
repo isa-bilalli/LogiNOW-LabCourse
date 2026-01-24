@@ -43,6 +43,18 @@ CREATE TABLE IF NOT EXISTS freight(
     FOREIGN KEY (userID) REFERENCES users(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS refreshTokens(
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  token_hash VARCHAR(255) NOT NULL UNIQUE,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  revoked BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY (user_id) REFERENCES users(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+  INDEX idx_token_hash (token_hash),
+  INDEX idx_user_revoked (user_id, revoked)
+);
+
 INSERT INTO role (name) VALUES
 ('user'),
 ('admin')

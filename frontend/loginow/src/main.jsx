@@ -1,8 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import {createBrowserRouter, RouterProvider} from 'react-router-dom'
-// import ProtectedRoute from './routes/ProtectedRoutes.jsx' Heqi // pasi te implementojme autentifikimin & back-endin
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext.jsx'
+import ProtectedRoute from './routes/ProtectedRoutes.jsx'
 import LandingPage from './pages/LandingPage.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
@@ -18,44 +19,33 @@ import ErrorPage from './pages/ErrorPage.jsx';
 const router = createBrowserRouter([
   {
     path: "/",
-    errorElement: <ErrorPage />, // 👈 catches ALL errors & 404s
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <LandingPage /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "findfreight", element: <FindFreight /> },
-      { path: "postfreight", element: <PostFreight /> },
-      { path: "findtruck", element: <FindTruck /> },
-      { path: "posttruck", element: <PostTruck /> },
       { path: "forgotpassword", element: <ForgotPassword /> },
-      { path: "myaccount", element: <MyAccount /> },
+      
+      // Protected routes - require authentication
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "findfreight", element: <FindFreight /> },
+          { path: "postfreight", element: <PostFreight /> },
+          { path: "findtruck", element: <FindTruck /> },
+          { path: "posttruck", element: <PostTruck /> },
+          { path: "myaccount", element: <MyAccount /> },
+        ],
+      },
     ],
   },
 ]);
-
-/* Router me routes te mbrojtura masi te implementojme back-endin dhe autentifikimin
-const router = createBrowserRouter([
-  { path: "/", element: <LandingPage /> },
-  { path: "/login", element: <Login /> },
-  { path: "/register", element: <Register /> },
-
-  {
-    element: <ProtectedRoute />,
-    children: [
-      { path: "/dashboard", element: <Dashboard /> },
-      { path: "/findfreight", element: <FindFreight /> },
-      { path: "/postfreight", element: <PostFreight /> },
-      { path: "/findtruck", element: <FindTruck /> },
-      { path: "/posttruck", element: <PostTruck /> },
-      { path: "/myaccount", element: <myAccount /> },
-    ],
-  },
-]);
-*/
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 )
