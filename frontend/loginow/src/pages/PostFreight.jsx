@@ -3,13 +3,12 @@ import { useState } from 'react';
 
 function PostFreight() {
   const [formData, setFormData] = useState({
-    origin: '',
+    pickupLocation: '',
     destination: '',
     date: '',
-    freightType: '',
-    weight: '',
-    payment: '',
-    description: ''
+    vanType: '',
+    maxWeight: '',
+    price: ''
   });
 
   const handleChange = (e) => {
@@ -26,13 +25,12 @@ function PostFreight() {
 
   const handleReset = () => {
     setFormData({
-      origin: '',
+      pickupLocation: '',
       destination: '',
       date: '',
-      freightType: '',
-      weight: '',
-      payment: '',
-      description: ''
+      vanType: '',
+      maxWeight: '',
+      price: ''
     });
   };
 
@@ -51,14 +49,14 @@ function PostFreight() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="origin" className="block text-sm font-medium text-black mb-2">
-                       Pickup Location
+                    <label htmlFor="pickupLocation" className="block text-sm font-medium text-black mb-2">
+                      Pickup Location
                     </label>
                     <input
                       type="text"
-                      id="origin"
-                      name="origin"
-                      value={formData.origin}
+                      id="pickupLocation"
+                      name="pickupLocation"
+                      value={formData.pickupLocation}
                       onChange={handleChange}
                       placeholder="Prishtine, Kosove"
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
@@ -67,7 +65,7 @@ function PostFreight() {
 
                   <div>
                     <label htmlFor="destination" className="block text-sm font-medium text-black mb-2">
-                       Delivery Location
+                      Delivery Location
                     </label>
                     <input
                       type="text"
@@ -82,7 +80,7 @@ function PostFreight() {
 
                   <div>
                     <label htmlFor="date" className="block text-sm font-medium text-black mb-2">
-                       Pickup Date
+                      Pickup Date
                     </label>
                     <input
                       type="date"
@@ -95,68 +93,55 @@ function PostFreight() {
                   </div>
 
                   <div>
-                    <label htmlFor="freightType" className="block text-sm font-medium text-black mb-2">
-                       Van Type
+                    <label htmlFor="vanType" className="block text-sm font-medium text-black mb-2">
+                      Van Type
                     </label>
                     <select
-                      id="freightType"
-                      name="freightType"
-                      value={formData.freightType}
+                      id="vanType"
+                      name="vanType"
+                      value={formData.vanType}
                       onChange={handleChange}
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
                     >
                       <option value="">Zgjidh llojin</option>
-                      <option value="electronics">Electronics</option>
-                      <option value="food">Food Products</option>
-                      <option value="construction">Construction Materials</option>
-                      <option value="machinery">Machinery</option>
-                      <option value="textiles">Textiles</option>
-                      <option value="general">General Cargo</option>
+                      <option value="Dry Van">Dry Van</option>
+                      <option value="Reefer">Reefer</option>
+                      <option value="Tarpauliner">Tarpauliner</option>
+                      <option value="Flatbed">Flatbed</option>
+                      <option value="Stepdeck">Stepdeck</option>
+                      <option value="Lowboy">Lowboy</option>
+                      <option value="Tanker">Tanker</option>
+                      <option value="Car Carrier">Car Carrier</option>
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="weight" className="block text-sm font-medium text-black mb-2">
-                       Weight
+                    <label htmlFor="maxWeight" className="block text-sm font-medium text-black mb-2">
+                      Max Weight (kg)
                     </label>
                     <input
-                      type="text"
-                      id="weight"
-                      name="weight"
-                      value={formData.weight}
+                      type="number"
+                      id="maxWeight"
+                      name="maxWeight"
+                      value={formData.maxWeight}
                       onChange={handleChange}
-                      placeholder="5000 kg"
+                      placeholder="5000"
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="payment" className="block text-sm font-medium text-black mb-2">
-                       Payment Offered
+                    <label htmlFor="price" className="block text-sm font-medium text-black mb-2">
+                      Price (EUR)
                     </label>
                     <input
-                      type="text"
-                      id="payment"
-                      name="payment"
-                      value={formData.payment}
+                      type="number"
+                      id="price"
+                      name="price"
+                      value={formData.price}
                       onChange={handleChange}
-                      placeholder="850 EUR"
+                      placeholder="850"
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label htmlFor="description" className="block text-sm font-medium text-black mb-2">
-                       Description
-                    </label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      placeholder="Pershkruaj detaje shtese per ngarkesen..."
-                      rows="4"
-                      className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none resize-none"
                     />
                   </div>
                 </div>
@@ -166,7 +151,7 @@ function PostFreight() {
                     onClick={handleSubmit}
                     className="px-6 py-2.5 bg-[#7ED957] text-white font-medium rounded-lg hover:bg-[#6bc245] transition-colors shadow-sm"
                   >
-                     Post Freight
+                    Post Freight
                   </button>
 
                   <button
@@ -184,10 +169,10 @@ function PostFreight() {
                 📦
               </div>
               <h3 className="text-xl font-semibold text-black mb-2">
-                Ready to Post?
+                My Posted Freights
               </h3>
               <p className="text-gray-600">
-                Ploteso formen me lart per te postuar ngarkesen tende
+                Ngarkeset e postuara do te shfaqen ketu
               </p>
             </div>
           </div>
