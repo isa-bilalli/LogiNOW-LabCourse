@@ -1,6 +1,7 @@
 import { parseBody } from '../utils/parseBody.js';
 import { registerUser, loginUser } from '../controllers/userController.js';
 import { refreshAccessToken, logoutUser } from '../controllers/authController.js';
+import { createTruck, getUserTrucks, getAllTrucks, updateTruck, deleteTruck } from '../controllers/truckController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 export async function handleRequest(req, res) {
@@ -94,6 +95,89 @@ export async function handleRequest(req, res) {
             return;
         } catch (error) {
             console.error('Error in protected route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // ========== TRUCK ROUTES ==========
+
+    // Create truck route (protected)
+    if (req.method === 'POST' && req.url === '/api/trucks') {
+        try {
+            const body = await parseBody(req);
+            req.body = body;
+            await authMiddleware(req, res, async () => {
+                await createTruck(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in create truck route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Get user's trucks (protected)
+    if (req.method === 'GET' && req.url === '/api/trucks/my') {
+        try {
+            await authMiddleware(req, res, async () => {
+                await getUserTrucks(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in get user trucks route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Get all trucks
+    if (req.method === 'GET' && req.url === '/api/trucks') {
+        try {
+            await getAllTrucks(req, res);
+            return;
+        } catch (error) {
+            console.error('Error in get all trucks route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Update truck (protected)
+    if (req.method === 'PUT' && req.url.startsWith('/api/trucks/')) {
+        try {
+            const truckID = req.url.split('/')[3];
+            req.params = { truckID };
+            const body = await parseBody(req);
+            req.body = body;
+            await authMiddleware(req, res, async () => {
+                await updateTruck(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in update truck route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Delete truck (protected)
+    if (req.method === 'DELETE' && req.url.startsWith('/api/trucks/')) {
+        try {
+            const truckID = req.url.split('/')[3];
+            req.params = { truckID };
+            await authMiddleware(req, res, async () => {
+                await deleteTruck(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in delete truck route:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Internal server error' }));
             return;
