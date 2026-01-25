@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'loginow123!';
 
 export function generateAccessToken(user) {
   const payload = {
-    id: user.userID,
+    userID: user.userID,  // Ndryshuar nga 'id' në 'userID'
     username: user.username,
     role: user.roleID
   };
