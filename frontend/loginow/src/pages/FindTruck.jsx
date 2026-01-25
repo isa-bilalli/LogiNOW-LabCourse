@@ -222,12 +222,6 @@ function FindTruck() {
                             </div>
                           )}
                         </div>
-
-                        <div className="flex items-center justify-between pt-4 border-t-2 border-gray-200">
-                          <button className="w-full px-4 py-2 bg-[#7ED957] text-white rounded-lg hover:bg-[#6bc245] transition-colors font-semibold">
-                            Contact Driver
-                          </button>
-                        </div>
                       </div>
                     ))}
                   </div>
