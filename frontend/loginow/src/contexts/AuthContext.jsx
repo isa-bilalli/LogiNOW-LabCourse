@@ -12,12 +12,36 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [accessToken, setAccessToken] = useState(null);
-  const [user, setUser] = useState(null);
+  const [accessToken, setAccessToken] = useState(() => {
+    // Initialize from localStorage
+    return localStorage.getItem('accessToken') || null;
+  });
+  const [user, setUser] = useState(() => {
+    // Initialize from localStorage
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   // Check if user is authenticated
   const isAuthenticated = !!accessToken && !!user;
+
+  // Save to localStorage whenever token or user changes
+  useEffect(() => {
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+    } else {
+      localStorage.removeItem('accessToken');
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
 
   // Initialize: Try to restore session on app load
   useEffect(() => {
@@ -26,19 +50,25 @@ export function AuthProvider({ children }) {
 
   async function initializeAuth() {
     try {
-      // Try to refresh token on app load (silently fail if no cookie exists)
+      // If we already have a token from localStorage, verify it
+      const storedToken = localStorage.getItem('accessToken');
+      if (storedToken) {
+        // Try to fetch user info to verify token is still valid
+        await fetchUserInfo(storedToken);
+        setIsLoading(false);
+        return;
+      }
+
+      // Otherwise try to refresh token on app load
       const result = await refreshAccessToken();
       if (result.ok && result.data && result.data.accessToken) {
         setAccessToken(result.data.accessToken);
-        // Fetch user info with the new token
         await fetchUserInfo(result.data.accessToken);
       } else {
-        // No valid session - this is normal if user hasn't logged in yet
         setAccessToken(null);
         setUser(null);
       }
     } catch (error) {
-      // Silently fail - no session exists (normal on first load)
       setAccessToken(null);
       setUser(null);
     } finally {
@@ -92,7 +122,7 @@ export function AuthProvider({ children }) {
         setAccessToken(result.data.accessToken);
         setUser(result.data.user);
         setIsLoading(false);
-        // Refresh token is automatically stored in HttpOnly cookie by browser
+        // Token will be saved to localStorage by useEffect
         return { ok: true };
       } else {
         console.error('Login failed:', result.error);
@@ -106,16 +136,15 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     try {
-      // Call logout API to revoke refresh token
       await logoutUser();
     } catch (error) {
       console.error('Logout error:', error);
-      // Continue with logout even if API call fails
     } finally {
-      // Clear local state regardless of API response
+      // Clear state and localStorage
       setAccessToken(null);
       setUser(null);
-      // Use window.location since AuthProvider is outside Router context
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
       window.location.href = '/login';
     }
   }
@@ -134,7 +163,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Get current access token (for API calls)
   function getAccessToken() {
     return accessToken;
   }
@@ -152,4 +180,3 @@ export function AuthProvider({ children }) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
