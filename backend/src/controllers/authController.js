@@ -1,5 +1,5 @@
 import { generateAccessToken } from '../utils/jwt.js';
-import refreshToken from '../models/refreshTokens.js';
+import RefreshToken from '../models/refreshTokens.js';
 import User from '../models/User.js';
 
 // Helper function to parse cookies from request
