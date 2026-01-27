@@ -3,6 +3,8 @@ import { registerUser, loginUser } from '../controllers/userController.js';
 import { refreshAccessToken, logoutUser } from '../controllers/authController.js';
 import { createTruck, getUserTrucks, getAllTrucks, updateTruck, deleteTruck } from '../controllers/truckController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { getUserProfile, updateUserProfile, changePassword, deleteAccount } from '../controllers/accountController.js';     
+
 
 export async function handleRequest(req, res) {
   // For cookies to work, we need to specify the origin (can't use '*')
