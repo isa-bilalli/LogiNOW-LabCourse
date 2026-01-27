@@ -29,7 +29,32 @@ class User {
 
     return User.findById(result.insertId);
   }
+    static async updateProfile(userID, userData) {
+    const { username, email, phoneNumber, companyName, locatedIn } = userData;
 
+    const query = `
+      UPDATE users 
+      SET username = ?, email = ?, phoneNumber = ?, companyName = ?, locatedIn = ?
+      WHERE userID = ?
+    `;
+    await pool.execute(query, [username, email, phoneNumber, companyName, locatedIn, userID]);
+    return User.findById(userID);  
+  }
+    static async updatePassword(userID, hashedPassword) {
+      const query = 'UPDATE users SET pass = ? WHERE userID = ?';
+      await pool.execute(query, [hashedPassword, userID]);
+      return true;
+    }
+    static async deleteAccount(userID) {
+      const query = 'DELETE  FROM users WHERE userID = ?';
+      const[result] = await pool.execute(query, [userID]);
+      return result.affectedRows > 0;
+    }
+    static async findByIdWithPassword(userID) {
+      const query = 'SELECT * from users WHERE userID = ?';
+      const[rows] = await pool.execute(query, [userID]);
+      return rows[0] || null;
+    }
   static async findById(userID) {
     const query = 'SELECT userID, username, email, roleID, phoneNumber, companyName, locatedIn, createdAt FROM users WHERE userID = ?';
     const [rows] = await pool.execute(query, [userID]);
