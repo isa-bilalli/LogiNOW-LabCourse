@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 
 function MyAccount() {
   const [formData, setFormData] = useState({
-    name: 'Festim Ismaili',
-    email: 'festim.ismaili@example.com',
-    phone: '0629697386',
-    company: 'Logistics Inc.',
-    location: 'New York, NY'
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    location: ''
   });
 
   const handleChange = (e) => {
@@ -19,34 +19,41 @@ function MyAccount() {
 
   const handleSave = () => {
     console.log('Saving data:', formData);
+    alert('Changes saved successfully!');
   };
 
   const handleCancel = () => {
     setFormData({
-      name: 'Festim Ismaili',
-      email: 'festim.ismaili@example.com',
-      phone: '0629697386',
-      company: 'Logistics Inc.',
-      location: 'New York, NY'
+      name: '',
+      email: '',
+      phone: '',
+      company: '',
+      location: ''
     });
   };
 
   return (
-    <div className="flex min-h-screen bg-white text-white">
+    <div className="flex min-h-screen bg-gray-100">
       {/* Navbar */}
       <Navbar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
+        {/* Page Header */}
+        <div className="bg-white shadow-sm px-8 py-6 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-800">My Account</h1>
+        </div>
+
+        {/* Content Area */}
         <div className="flex-1 p-8">
           <div className="max-w-4xl mx-auto">
             {/* Profile Card */}
-            <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8">
+            <div className="bg-white rounded-lg shadow-md p-8">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
                 {/* Avatar */}
-                <div className="shrink-0">
+                <div className="flex-shrink-0">
                   <div className="w-32 h-32 bg-gray-600 rounded-full flex items-center justify-center">
-                    <div className="text-black text-5xl font-bold">
+                    <div className="text-white text-5xl font-bold">
                       {formData.name.charAt(0)}
                     </div>
                   </div>
@@ -63,7 +70,7 @@ function MyAccount() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Name */}
                       <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-black mb-2">
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                           Full Name
                         </label>
                         <input
@@ -72,13 +79,13 @@ function MyAccount() {
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
-                          className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957] focus:border-transparent transition-all"
                         />
                       </div>
 
                       {/* Email */}
                       <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-black mb-2">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                           Email Address
                         </label>
                         <input
@@ -87,7 +94,7 @@ function MyAccount() {
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957] focus:border-transparent transition-all"
                         />
                       </div>
 
@@ -102,7 +109,7 @@ function MyAccount() {
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957] focus:border-transparent transition-all"
                         />
                       </div>
 
@@ -117,7 +124,7 @@ function MyAccount() {
                           name="company"
                           value={formData.company}
                           onChange={handleChange}
-                          className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957] focus:border-transparent transition-all"
                         />
                       </div>
 
@@ -133,7 +140,7 @@ function MyAccount() {
                           value={formData.location}
                           onChange={handleChange}
                           placeholder="City, State"
-                          className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957] focus:border-transparent transition-all"
                         />
                       </div>
                     </div>
@@ -148,7 +155,7 @@ function MyAccount() {
                       </button>
                       <button
                         onClick={handleCancel}
-                        className="px-6 py-2.5 bg-gray-400 text-white font-medium rounded-lg hover:bg-gray-500 transition-colors focus:outline-none"
+                        className="px-6 py-2.5 bg-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-400 transition-colors"
                       >
                         Cancel
                       </button>
@@ -159,12 +166,15 @@ function MyAccount() {
             </div>
 
             {/* Additional Settings Section */}
-            <div className="mt-6 bg-[#D9D9D9] rounded-lg shadow-md p-8">
+            <div className="mt-8 bg-white rounded-lg shadow-md p-8">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                Account Settings
+              </h3>
               <div className="space-y-4">
-                <button className="w-full text-left px-4 py-3 rounded-lg hover:scale-101 transition-transform text-white bg-[#7ED957]">
+                <button className="w-full text-left px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                   Change Password
                 </button>
-                <button className="w-full text-left px-4 py-3 text-white rounded-lg bg-red-600 hover:scale-101 transition-transform">
+                <button className="w-full text-left px-4 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
                   Delete Account
                 </button>
               </div>
