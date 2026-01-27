@@ -102,6 +102,71 @@ export async function handleRequest(req, res) {
             return;
         }
     }
+    //accountroutes
+     if (req.method === 'GET' && req.url === '/api/account/profile') {
+        try {
+            await authMiddleware(req, res, async () => {
+                await getUserProfile(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in get profile route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Update user profile (protected)
+    if (req.method === 'PUT' && req.url === '/api/account/profile') {
+        try {
+            const body = await parseBody(req);
+            req.body = body;
+            await authMiddleware(req, res, async () => {
+                await updateUserProfile(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in update profile route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Change password (protected)
+    if (req.method === 'PUT' && req.url === '/api/account/password') {
+        try {
+            const body = await parseBody(req);
+            req.body = body;
+            await authMiddleware(req, res, async () => {
+                await changePassword(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in change password route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Delete account (protected)
+    if (req.method === 'DELETE' && req.url === '/api/account') {
+        try {
+            const body = await parseBody(req);
+            req.body = body;
+            await authMiddleware(req, res, async () => {
+                await deleteAccount(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in delete account route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
 
     // ========== TRUCK ROUTES ==========
 
