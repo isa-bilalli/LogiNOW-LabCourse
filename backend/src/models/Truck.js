@@ -43,7 +43,12 @@ class Truck {
   }
 
   static async findAll() {
-    const query = 'SELECT * FROM truck ORDER BY dateAvailable DESC';
+    const query = `
+      SELECT t.*, u.phoneNumber, u.username 
+      FROM truck t 
+      LEFT JOIN users u ON t.userID = u.userID 
+      ORDER BY t.dateAvailable DESC
+    `;
     const [rows] = await pool.execute(query);
     return rows;
   }

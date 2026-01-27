@@ -197,7 +197,7 @@ function FindTruck() {
                             </div>
                             <div>
                               <h4 className="text-gray-800 font-semibold">{truck.truckType}</h4>
-                              <p className="text-gray-600 text-sm">Available</p>
+                              <p className="text-gray-600 text-sm">{truck.username || 'Owner'}</p>
                             </div>
                           </div>
                         </div>
@@ -219,6 +219,12 @@ function FindTruck() {
                             <div className="flex items-center gap-2 text-sm">
                               <span>📏</span>
                               <span>Length: {truck.vanLength}</span>
+                            </div>
+                          )}
+                          {truck.phoneNumber && (
+                            <div className="flex items-center gap-2 text-sm font-semibold text-[#7ED957]">
+                              <span>📞</span>
+                              <span>{truck.phoneNumber}</span>
                             </div>
                           )}
                         </div>
