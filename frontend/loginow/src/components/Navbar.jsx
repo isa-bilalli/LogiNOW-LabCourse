@@ -1,17 +1,11 @@
-import { NavLink } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext.jsx';
+import { Link, NavLink } from 'react-router-dom';
+
 
 function Navbar() {
-  const { logout } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-  };
-
   return (
-    <nav className="bg-[#D9D9D9] fixed top-0 left-0 w-50 h-screen flex flex-col items-center pt-4 px-4">
-      <img src="/src/assets/LogiNOW_WHITE-removebg-preview.png" className="w-36 sm:w-40 md:w-44 h-auto mb-10 pointer-events-none select-none" draggable={false} alt="Logo"/>
-      <div className="flex flex-col w-full space-y-6 select-none">
+    <nav className="bg-[#D9D9D9] w-50 min-h-screen flex flex-col items-center pt-4 px-4">
+      <img src="/src/assets/LogiNOW_WHITE-removebg-preview.png" className="w-36 sm:w-40 md:w-44 h-auto mb-10" alt="Logo"/>
+      <div className="flex flex-col w-full space-y-6">
         <NavLink to="/dashboard" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>Dashboard</NavLink>
         <NavLink to="/postfreight" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>Post Freight</NavLink>
         <NavLink to="/findfreight" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>Find Freight</NavLink>
@@ -20,12 +14,7 @@ function Navbar() {
         <NavLink to="/myaccount" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>My Account</NavLink>
       </div>
       <div className="mt-auto mb-6 w-full flex justify-center">
-        <button 
-          onClick={handleLogout}
-          className="flex items-center space-x-2 hover:opacity-80 cursor-pointer bg-transparent border-none"
-        >
-          <img src="/src/assets/logout-Photoroom.png" className="w-16 h-16 object-contain pointer-events-none select-none" draggable={false} alt="Logout Icon"/>
-        </button>
+        <Link to="/" className="flex items-center space-x-2 hover:opacity-80"><img src="/src/assets/logout-Photoroom.png" className="w-16 h-16 object-contain" alt="Logout Icon"/></Link>
       </div>
     </nav>
   );
