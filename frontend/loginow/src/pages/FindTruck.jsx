@@ -85,12 +85,12 @@ function FindTruck() {
   const displayTrucks = showResults ? filteredTrucks : [];
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-gray-100">
       <Navbar />
 
-      <div className="flex-1 flex flex-col ml-50">
-        <div className="flex-1 p-8">
-          <div className="max-w-6xl mx-auto">
+      <div className="flex-1 flex flex-col">
+          <div className="flex-1 py-6 px-12">
+              <div className="space-y-6">
             {/* Search Form Card */}
             <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8 mb-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-6">Search Criteria</h2>
