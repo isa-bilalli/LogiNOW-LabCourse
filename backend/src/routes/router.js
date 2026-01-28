@@ -1,10 +1,10 @@
-import { parseBody } from '../utils/parseBody.js';
-import { registerUser, loginUser } from '../controllers/userController.js';
-import { refreshAccessToken, logoutUser } from '../controllers/authController.js';
-import { createTruck, getUserTrucks, getAllTrucks, updateTruck, deleteTruck } from '../controllers/truckController.js';
-import { authMiddleware } from '../middlewares/authMiddleware.js';
-import { getUserProfile, updateUserProfile, changePassword, deleteAccount } from '../controllers/accountController.js';     
+import { createFreight, deleteFreight, getAllFreights, getUserFreights, updateFreight } from '../controllers/freightController.js';
+import { createTruck, deleteTruck, getAllTrucks, getUserTrucks, updateTruck } from '../controllers/truckController.js';
+import { loginUser, registerUser } from '../controllers/userController.js';
+import { logoutUser, refreshAccessToken } from '../controllers/authController.js';
 
+import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { parseBody } from '../utils/parseBody.js';
 
 export async function handleRequest(req, res) {
   // For cookies to work, we need to specify the origin (can't use '*')
@@ -102,71 +102,6 @@ export async function handleRequest(req, res) {
             return;
         }
     }
-    //accountroutes
-     if (req.method === 'GET' && req.url === '/api/account/profile') {
-        try {
-            await authMiddleware(req, res, async () => {
-                await getUserProfile(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in get profile route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
-
-    // Update user profile (protected)
-    if (req.method === 'PUT' && req.url === '/api/account/profile') {
-        try {
-            const body = await parseBody(req);
-            req.body = body;
-            await authMiddleware(req, res, async () => {
-                await updateUserProfile(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in update profile route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
-
-    // Change password (protected)
-    if (req.method === 'PUT' && req.url === '/api/account/password') {
-        try {
-            const body = await parseBody(req);
-            req.body = body;
-            await authMiddleware(req, res, async () => {
-                await changePassword(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in change password route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
-
-    // Delete account (protected)
-    if (req.method === 'DELETE' && req.url === '/api/account') {
-        try {
-            const body = await parseBody(req);
-            req.body = body;
-            await authMiddleware(req, res, async () => {
-                await deleteAccount(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in delete account route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
 
     // ========== TRUCK ROUTES ==========
 
@@ -245,6 +180,89 @@ export async function handleRequest(req, res) {
             return;
         } catch (error) {
             console.error('Error in delete truck route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // ========== FREIGHT ROUTES ==========
+
+    // Create freight route (protected)
+    if (req.method === 'POST' && req.url === '/api/freights') {
+        try {
+            const body = await parseBody(req);
+            req.body = body;
+            await authMiddleware(req, res, async () => {
+                await createFreight(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in create freight route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Get user's freights (protected)
+    if (req.method === 'GET' && req.url === '/api/freights/my') {
+        try {
+            await authMiddleware(req, res, async () => {
+                await getUserFreights(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in get user freights route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Get all freights
+    if (req.method === 'GET' && req.url === '/api/freights') {
+        try {
+            await getAllFreights(req, res);
+            return;
+        } catch (error) {
+            console.error('Error in get all freights route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Update freight (protected)
+    if (req.method === 'PUT' && req.url.startsWith('/api/freights/')) {
+        try {
+            const freightID = req.url.split('/')[3];
+            req.params = { freightID };
+            const body = await parseBody(req);
+            req.body = body;
+            await authMiddleware(req, res, async () => {
+                await updateFreight(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in update freight route:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Delete freight (protected)
+    if (req.method === 'DELETE' && req.url.startsWith('/api/freights/')) {
+        try {
+            const freightID = req.url.split('/')[3];
+            req.params = { freightID };
+            await authMiddleware(req, res, async () => {
+                await deleteFreight(req, res);
+            });
+            return;
+        } catch (error) {
+            console.error('Error in delete freight route:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Internal server error' }));
             return;
