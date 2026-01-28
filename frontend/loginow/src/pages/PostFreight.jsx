@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
+
 import Navbar from '../components/Navbar';
-import { useState } from 'react';
 
 function PostFreight() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,39 @@ function PostFreight() {
     price: ''
   });
 
+  const [myFreights, setMyFreights] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Fetch user's freights on component mount
+  useEffect(() => {
+    fetchMyFreights();
+  }, []);
+
+  const fetchMyFreights = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return;
+
+      const response = await fetch('http://localhost:3000/api/freights/my', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMyFreights(data.freights || []);
+      }
+    } catch (err) {
+      console.error('Error fetching freights:', err);
+    }
+  };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -18,9 +52,58 @@ function PostFreight() {
     });
   };
 
-  const handleSubmit = () => {
-    console.log('Posting freight:', formData);
-    // Backend integration do te shtohet ketu
+  const handleSubmit = async () => {
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      // Validation
+      if (!formData.pickupLocation || !formData.destination || !formData.date || !formData.vanType || !formData.maxWeight || !formData.price) {
+        setError('Ju lutem plotësoni të gjitha fushat!');
+        setLoading(false);
+        return;
+      }
+
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        setError('Ju lutem kyçuni për të postuar freight!');
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch('http://localhost:3000/api/freights', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          pickupLocation: formData.pickupLocation,
+          destination: formData.destination,
+          vanType: formData.vanType,
+          date: formData.date,
+          maxWeight: parseInt(formData.maxWeight),
+          price: parseInt(formData.price)
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess('Freight u postua me sukses! 🎉');
+        handleReset();
+        fetchMyFreights(); // Refresh the list
+      } else {
+        setError(data.message || 'Gabim gjatë postimit të freight-it!');
+      }
+    } catch (err) {
+      console.error('Error posting freight:', err);
+      setError('Gabim në lidhje me server-in!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -45,6 +128,18 @@ function PostFreight() {
               <h2 className="text-xl font-semibold text-black mb-6">
                 Freight Details
               </h2>
+
+              {/* Error & Success Messages */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                  {success}
+                </div>
+              )}
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -149,9 +244,10 @@ function PostFreight() {
                 <div className="flex gap-4 pt-4">
                   <button
                     onClick={handleSubmit}
-                    className="px-6 py-2.5 bg-[#7ED957] text-white font-medium rounded-lg hover:bg-[#6bc245] transition-colors shadow-sm"
+                    disabled={loading}
+                    className="px-6 py-2.5 bg-[#7ED957] text-white font-medium rounded-lg hover:bg-[#6bc245] transition-colors shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
-                    Post Freight
+                    {loading ? 'Duke postuar...' : 'Post Freight'}
                   </button>
 
                   <button
@@ -164,16 +260,42 @@ function PostFreight() {
               </div>
             </div>
 
-            <div className="bg-[#D9D9D9] rounded-lg shadow-md p-16 text-center">
-              <div className="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 text-5xl">
-                📦
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-2">
+            {/* My Posted Freights */}
+            <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8">
+              <h3 className="text-xl font-semibold text-black mb-4">
                 My Posted Freights
               </h3>
-              <p className="text-gray-600">
-                Ngarkeset e postuara do te shfaqen ketu
-              </p>
+              
+              {myFreights.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 text-5xl">
+                    📦
+                  </div>
+                  <p className="text-gray-600">
+                    Nuk keni postuar asnjë freight ende
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {myFreights.map((freight) => (
+                    <div key={freight.freightID} className="bg-white p-4 rounded-lg shadow">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="text-lg font-semibold text-black">
+                          {freight.truckType}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {new Date(freight.dateAvailable).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-700 space-y-1">
+                        <p>📍 {freight.currentLocation} → {freight.destination}</p>
+                        <p>⚖️ Max Weight: {freight.maxWeight} kg</p>
+                        <p>💰 Price: €{freight.price}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
