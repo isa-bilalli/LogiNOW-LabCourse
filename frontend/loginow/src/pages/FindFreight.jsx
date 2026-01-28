@@ -1,72 +1,45 @@
+import { useEffect, useState } from 'react';
+
 import Navbar from '../components/Navbar';
-import { useState } from 'react';
 
 function FindFreight() {
   const [searchParams, setSearchParams] = useState({
     origin: '',
     destination: '',
-    date: '',
-    freightType: '',
-    weight: ''
+    truckType: '',
+    maxWeight: ''
   });
 
-  const [results, setResults] = useState([]);
+  const [allFreights, setAllFreights] = useState([]);
+  const [filteredFreights, setFilteredFreights] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const sampleFreights = [
-    {
-      id: 1,
-      company: 'ABC Logistics',
-      freightType: 'Electronics',
-      weight: '3500 kg',
-      origin: 'Prishtine',
-      destination: 'Munchen',
-      date: '2026-01-21',
-      payment: '850 EUR',
-      distance: '1200 km',
-      rating: 4.9,
-      urgent: false
-    },
-    {
-      id: 2,
-      company: 'Euro Transport',
-      freightType: 'Food Products',
-      weight: '5000 kg',
-      origin: 'Tirane',
-      destination: 'Milano',
-      date: '2026-01-23',
-      payment: '920 EUR',
-      distance: '850 km',
-      rating: 4.7,
-      urgent: true
-    },
-    {
-      id: 3,
-      company: 'Global Shipping',
-      freightType: 'Construction Materials',
-      weight: '8000 kg',
-      origin: 'Shkup',
-      destination: 'Wien',
-      date: '2026-01-26',
-      payment: '1150 EUR',
-      distance: '950 km',
-      rating: 4.8,
-      urgent: false
-    },
-    {
-      id: 4,
-      company: 'Fast Cargo',
-      freightType: 'Textiles',
-      weight: '2500 kg',
-      origin: 'Prishtine',
-      destination: 'Roma',
-      date: '2026-01-24',
-      payment: '680 EUR',
-      distance: '1100 km',
-      rating: 4.6,
-      urgent: false
+  // Fetch all freights on component mount
+  useEffect(() => {
+    fetchAllFreights();
+  }, []);
+
+  const fetchAllFreights = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:3000/api/freights', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAllFreights(data.freights || []);
+      }
+    } catch (err) {
+      console.error('Error fetching freights:', err);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const handleChange = (e) => {
     setSearchParams({
@@ -76,7 +49,34 @@ function FindFreight() {
   };
 
   const handleSearch = () => {
-    setResults(sampleFreights);
+    // Filter freights based on search params
+    let filtered = allFreights;
+
+    if (searchParams.origin) {
+      filtered = filtered.filter(freight =>
+        freight.currentLocation.toLowerCase().includes(searchParams.origin.toLowerCase())
+      );
+    }
+
+    if (searchParams.destination) {
+      filtered = filtered.filter(freight =>
+        freight.destination.toLowerCase().includes(searchParams.destination.toLowerCase())
+      );
+    }
+
+    if (searchParams.truckType) {
+      filtered = filtered.filter(freight =>
+        freight.truckType === searchParams.truckType
+      );
+    }
+
+    if (searchParams.maxWeight) {
+      filtered = filtered.filter(freight =>
+        freight.maxWeight >= parseInt(searchParams.maxWeight)
+      );
+    }
+
+    setFilteredFreights(filtered);
     setShowResults(true);
   };
 
@@ -84,13 +84,14 @@ function FindFreight() {
     setSearchParams({
       origin: '',
       destination: '',
-      date: '',
-      freightType: '',
-      weight: ''
+      truckType: '',
+      maxWeight: ''
     });
     setShowResults(false);
-    setResults([]);
+    setFilteredFreights([]);
   };
+
+  const displayFreights = showResults ? filteredFreights : [];
 
   return (
     <div className="flex min-h-screen bg-white">
@@ -99,6 +100,7 @@ function FindFreight() {
       <div className="flex-1 flex flex-col ml-50">
         <div className="flex-1 p-8">
           <div className="max-w-6xl mx-auto">
+            {/* Search Form Card */}
             <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8 mb-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-6">
                 Search Criteria
@@ -108,7 +110,7 @@ function FindFreight() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="origin" className="block text-sm font-medium text-gray-700 mb-2">
-                       Pickup Location
+                      Pickup Location
                     </label>
                     <input
                       type="text"
@@ -123,7 +125,7 @@ function FindFreight() {
 
                   <div>
                     <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-2">
-                       Delivery Location
+                      Delivery Location
                     </label>
                     <input
                       type="text"
@@ -137,51 +139,39 @@ function FindFreight() {
                   </div>
 
                   <div>
-                    <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
-                       Pickup Date
-                    </label>
-                    <input
-                      type="date"
-                      id="date"
-                      name="date"
-                      value={searchParams.date}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="freightType" className="block text-sm font-medium text-gray-700 mb-2">
-                       Van Type
+                    <label htmlFor="truckType" className="block text-sm font-medium text-gray-700 mb-2">
+                      Van Type
                     </label>
                     <select
-                      id="freightType"
-                      name="freightType"
-                      value={searchParams.freightType}
+                      id="truckType"
+                      name="truckType"
+                      value={searchParams.truckType}
                       onChange={handleChange}
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
                     >
                       <option value="">Te gjitha</option>
-                      <option value="electronics">Electronics</option>
-                      <option value="food">Food Products</option>
-                      <option value="construction">Construction Materials</option>
-                      <option value="machinery">Machinery</option>
-                      <option value="textiles">Textiles</option>
-                      <option value="general">General Cargo</option>
+                      <option value="Dry Van">Dry Van</option>
+                      <option value="Reefer">Reefer</option>
+                      <option value="Tarpauliner">Tarpauliner</option>
+                      <option value="Flatbed">Flatbed</option>
+                      <option value="Stepdeck">Stepdeck</option>
+                      <option value="Lowboy">Lowboy</option>
+                      <option value="Tanker">Tanker</option>
+                      <option value="Car Carrier">Car Carrier</option>
                     </select>
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-2">
-                       Weight
+                  <div>
+                    <label htmlFor="maxWeight" className="block text-sm font-medium text-gray-700 mb-2">
+                      Min Weight (kg)
                     </label>
                     <input
-                      type="text"
-                      id="weight"
-                      name="weight"
-                      value={searchParams.weight}
+                      type="number"
+                      id="maxWeight"
+                      name="maxWeight"
+                      value={searchParams.maxWeight}
                       onChange={handleChange}
-                      placeholder="5000 kg"
+                      placeholder="5000"
                       className="w-full px-4 py-2 bg-white text-black border-[#7ED957] border-2 rounded-lg focus:outline-none"
                     />
                   </div>
@@ -190,9 +180,10 @@ function FindFreight() {
                 <div className="flex gap-4 pt-4">
                   <button
                     onClick={handleSearch}
-                    className="px-6 py-2.5 bg-[#7ED957] text-white font-medium rounded-lg hover:bg-[#6bc245] transition-colors shadow-sm"
+                    disabled={loading}
+                    className="px-6 py-2.5 bg-[#7ED957] text-white font-medium rounded-lg hover:bg-[#6bc245] transition-colors shadow-sm disabled:bg-gray-400"
                   >
-                     Search Freight
+                    {loading ? 'Loading...' : 'Search Freight'}
                   </button>
 
                   <button
@@ -205,94 +196,77 @@ function FindFreight() {
               </div>
             </div>
 
+            {/* Results Section */}
             {showResults && (
               <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold text-gray-800">
-                    Available Freight ({results.length})
+                    Available Freight ({displayFreights.length})
                   </h2>
-                  <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors">
-                     Filter
-                  </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {results.map(freight => (
-                    <div
-                      key={freight.id}
-                      className="bg-white rounded-lg p-6 shadow hover:shadow-lg transition-shadow relative border-2 border-gray-300"
-                    >
-                      {freight.urgent && (
-                        <div className="absolute top-3 right-3">
-                          <span className="bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                            URGENT
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-[#7ED957] rounded-full flex items-center justify-center text-2xl">
-                            📦
-                          </div>
-                          <div>
-                            <h4 className="text-gray-800 font-semibold">
-                              {freight.company}
-                            </h4>
-                            <p className="text-gray-600 text-sm">
-                              {freight.freightType}
-                            </p>
+                {displayFreights.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-600">Nuk u gjetën freights me këto kritere</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {displayFreights.map(freight => (
+                      <div
+                        key={freight.freightID}
+                        className="bg-white rounded-lg p-6 shadow hover:shadow-lg transition-shadow border-2 border-gray-300"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-[#7ED957] rounded-full flex items-center justify-center text-2xl">
+                              📦
+                            </div>
+                            <div>
+                              <h4 className="text-gray-800 font-semibold">
+                                {freight.truckType}
+                              </h4>
+                              <p className="text-gray-600 text-sm">
+                                {freight.username || 'Owner'}
+                              </p>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-1">
-                          <span className="text-yellow-500">★</span>
-                          <span className="text-gray-800 font-semibold">
-                            {freight.rating}
-                          </span>
+                        <div className="space-y-2 mb-4 text-gray-700">
+                          <div className="flex items-center gap-2 text-sm">
+                            <span>📍</span>
+                            <span>{freight.currentLocation} → {freight.destination}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <span>📅</span>
+                            <span>{new Date(freight.dateAvailable).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <span>⚖️</span>
+                            <span>Weight: {freight.maxWeight} kg</span>
+                          </div>
+                          {freight.phoneNumber && (
+                            <div className="flex items-center gap-2 text-sm font-semibold text-[#7ED957]">
+                              <span>📞</span>
+                              <span>{freight.phoneNumber}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
-
-                      <div className="space-y-2 mb-4 text-gray-700">
-                        <div className="flex items-center gap-2 text-sm">
-                          <span></span>
-                          <span>{freight.origin} → {freight.destination}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <span></span>
-                          <span>{freight.date}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <span></span>
-                          <span>Weight: {freight.weight}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <span></span>
-                          <span>Distance: {freight.distance}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-4 border-t-2 border-gray-200">
-                        <span className="text-2xl font-bold text-[#7ED957]">
-                          {freight.payment}
-                        </span>
-                        <button className="px-4 py-2 bg-[#7ED957] text-white rounded-lg hover:bg-[#6bc245] transition-colors font-semibold">
-                          Accept
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
+            {/* Empty State */}
             {!showResults && (
               <div className="bg-[#D9D9D9] rounded-lg shadow-md p-16 text-center">
                 <div className="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 text-5xl">
                   📦
                 </div>
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                  No results yet
+                  {loading ? 'Loading freights...' : `${allFreights.length} freights available`}
                 </h3>
                 <p className="text-gray-600">
                   Use the search form above to find available freight
