@@ -1,4 +1,4 @@
-import { createFreight, deleteFreight, getAllFreights, getUserFreights, updateFreight } from '../controllers/freightController.js';
+import { createFreights, deleteFreights, getAllFreights, getUserFreights, updateFreights } from '../controllers/freightController.js';
 import { createTruck, deleteTruck, getAllTrucks, getUserTrucks, updateTruck } from '../controllers/truckController.js';
 import { loginUser, registerUser } from '../controllers/userController.js';
 import { logoutUser, refreshAccessToken } from '../controllers/authController.js';
@@ -281,7 +281,7 @@ export async function handleRequest(req, res) {
             const body = await parseBody(req);
             req.body = body;
             await authMiddleware(req, res, async () => {
-                await createFreight(req, res);
+                await createFreights(req, res);
             });
             return;
         } catch (error) {
@@ -300,7 +300,7 @@ export async function handleRequest(req, res) {
             });
             return;
         } catch (error) {
-            console.error('Error in get user freights route:', error);
+            console.error('Error in get user freight route:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Internal server error' }));
             return;
@@ -313,7 +313,7 @@ export async function handleRequest(req, res) {
             await getAllFreights(req, res);
             return;
         } catch (error) {
-            console.error('Error in get all freights route:', error);
+            console.error('Error in get all freight route:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Internal server error' }));
             return;

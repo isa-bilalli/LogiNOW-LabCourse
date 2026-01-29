@@ -1,6 +1,6 @@
 import Freight from '../models/Freight.js';
 
-export async function createFreight(req, res) {
+export async function createFreights(req, res) {
   try {
     const { pickupLocation, destination, vanType, date, maxWeight, price } = req.body;
 
@@ -94,7 +94,7 @@ export async function getAllFreights(req, res) {
   }
 }
 
-export async function updateFreight(req, res) {
+export async function updateFreights(req, res) {
   try {
     const { freightID } = req.params;
     const { pickupLocation, destination, vanType, date, maxWeight, price, full, booked } = req.body;
@@ -148,7 +148,7 @@ export async function updateFreight(req, res) {
   }
 }
 
-export async function deleteFreight(req, res) {
+export async function deleteFreights(req, res) {
   try {
     const { freightID } = req.params;
 

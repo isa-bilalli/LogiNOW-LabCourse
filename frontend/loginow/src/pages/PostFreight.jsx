@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import Navbar from '../components/Navbar';
 
+
 function PostFreight() {
   const [formData, setFormData] = useState({
     pickupLocation: '',
