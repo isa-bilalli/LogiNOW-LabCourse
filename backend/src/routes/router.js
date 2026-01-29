@@ -328,7 +328,7 @@ export async function handleRequest(req, res) {
             const body = await parseBody(req);
             req.body = body;
             await authMiddleware(req, res, async () => {
-                await updateFreight(req, res);
+                await updateFreights(req, res);
             });
             return;
         } catch (error) {
