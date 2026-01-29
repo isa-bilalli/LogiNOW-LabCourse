@@ -345,7 +345,7 @@ export async function handleRequest(req, res) {
             const freightID = req.url.split('/')[3];
             req.params = { freightID };
             await authMiddleware(req, res, async () => {
-                await deleteFreight(req, res);
+                await deleteFreights(req, res);
             });
             return;
         } catch (error) {

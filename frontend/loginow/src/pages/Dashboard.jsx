@@ -28,13 +28,11 @@ function Dashboard() {
   const [editingFreight, setEditingFreight] = useState(null);
   const [freightFormData, setFreightFormData] = useState({
     pickupLocation: '',
-    deliveryLocation: '',
-    freightType: 'General',
-    weight: '',
-    pickupDate: '',
-    deliveryDate: '',
-    price: '',
-    description: ''
+    destination: '',
+    vanType: '',
+    date: '',
+    maxWeight: '',
+    price: ''
   });
 
   // Delete Confirmation Modal
@@ -62,9 +60,8 @@ function Dashboard() {
         getUserTrucks(),
         getUserFreight()
       ]);
-      // Filter out any items with missing required dates
       setTrucks(trucksData.filter(t => t && t.dateAvailable));
-      setFreight(freightData.filter(f => f && f.pickupDate));
+      setFreight(freightData.filter(f => f && f.dateAvailable));
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to load data: ' + error.message });
     } finally {
@@ -139,26 +136,33 @@ function Dashboard() {
   };
 
   const handleFreightSubmit = async () => {
-    if (!freightFormData.pickupLocation || !freightFormData.deliveryLocation || !freightFormData.weight || !freightFormData.pickupDate) {
+    if (!freightFormData.pickupLocation || !freightFormData.destination || !freightFormData.vanType || !freightFormData.date || !freightFormData.maxWeight || !freightFormData.price) {
       setMessage({ type: 'error', text: 'Please fill in all required fields' });
       return;
     }
 
     try {
-      await updateFreight(editingFreight.freightID, freightFormData);
+      const backendData = {
+        pickupLocation: freightFormData.pickupLocation,
+        destination: freightFormData.destination,
+        vanType: freightFormData.vanType,
+        date: freightFormData.date,
+        maxWeight: parseInt(freightFormData.maxWeight),
+        price: parseInt(freightFormData.price)
+      };
+      
+      await updateFreight(editingFreight.freightID, backendData);
       setMessage({ type: 'success', text: 'Freight updated successfully! ✓' });
       
       setShowFreightModal(false);
       setEditingFreight(null);
       setFreightFormData({
         pickupLocation: '',
-        deliveryLocation: '',
-        freightType: 'General',
-        weight: '',
-        pickupDate: '',
-        deliveryDate: '',
-        price: '',
-        description: ''
+        destination: '',
+        vanType: '',
+        date: '',
+        maxWeight: '',
+        price: ''
       });
       loadData();
     } catch (error) {
@@ -169,14 +173,12 @@ function Dashboard() {
   const handleFreightEdit = (freight) => {
     setEditingFreight(freight);
     setFreightFormData({
-      pickupLocation: freight.pickupLocation,
-      deliveryLocation: freight.deliveryLocation,
-      freightType: freight.freightType,
-      weight: freight.weight,
-      pickupDate: freight.pickupDate ? freight.pickupDate.split('T')[0] : '',
-      deliveryDate: freight.deliveryDate ? freight.deliveryDate.split('T')[0] : '',
-      price: freight.price || '',
-      description: freight.description || ''
+      pickupLocation: freight.currentLocation,
+      destination: freight.destination,
+      vanType: freight.truckType,
+      date: freight.dateAvailable ? freight.dateAvailable.split('T')[0] : '',
+      maxWeight: freight.maxWeight,
+      price: freight.price || ''
     });
     setShowFreightModal(true);
   };
@@ -185,7 +187,7 @@ function Dashboard() {
     setDeleteItem({
       type: 'freight',
       id: freight.freightID,
-      name: `${freight.freightType} - ${freight.pickupLocation} to ${freight.deliveryLocation}`
+      name: `${freight.truckType} - ${freight.currentLocation} to ${freight.destination}`
     });
     setShowDeleteModal(true);
   };
@@ -265,7 +267,7 @@ function Dashboard() {
                             <p className="font-semibold text-gray-800">{truck.truckType}</p>
                             <p className="text-sm text-gray-600">📍 {truck.currentLocation}</p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Max Weight: {truck.maxWeight} lbs | Available: {truck.dateAvailable ? truck.dateAvailable.split('T')[0] : 'N/A'}
+                              Max Weight: {truck.maxWeight} kg | Available: {truck.dateAvailable ? truck.dateAvailable.split('T')[0] : 'N/A'}
                             </p>
                           </div>
                           <div className="flex gap-1 ml-2">
@@ -305,10 +307,10 @@ function Dashboard() {
                       <div key={f.freightID} className="bg-gray-50 border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start mb-2">
                           <div className="flex-1">
-                            <p className="font-semibold text-gray-800">{f.freightType}</p>
-                            <p className="text-sm text-gray-600">📦 {f.pickupLocation} → {f.deliveryLocation}</p>
+                            <p className="font-semibold text-gray-800">{f.truckType}</p>
+                            <p className="text-sm text-gray-600">📦 {f.currentLocation} → {f.destination}</p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Weight: {f.weight} lbs | Pickup: {f.pickupDate ? f.pickupDate.split('T')[0] : 'N/A'}
+                              Weight: {f.maxWeight} kg | Date: {f.dateAvailable ? f.dateAvailable.split('T')[0] : 'N/A'} | €{f.price}
                             </p>
                           </div>
                           <div className="flex gap-1 ml-2">
@@ -403,7 +405,7 @@ function Dashboard() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Max Weight (lbs) *
+                    Max Weight (kg) *
                   </label>
                   <input
                     type="number"
@@ -494,8 +496,8 @@ function Dashboard() {
                   </label>
                   <input
                     type="text"
-                    name="deliveryLocation"
-                    value={freightFormData.deliveryLocation}
+                    name="destination"
+                    value={freightFormData.destination}
                     onChange={handleFreightChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
                     placeholder="Miami, FL"
@@ -504,33 +506,47 @@ function Dashboard() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Freight Type *
+                    Van Type *
                   </label>
                   <select
-                    name="freightType"
-                    value={freightFormData.freightType}
+                    name="vanType"
+                    value={freightFormData.vanType}
                     onChange={handleFreightChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
                   >
-                    <option value="General">General</option>
-                    <option value="Refrigerated">Refrigerated</option>
-                    <option value="Hazardous">Hazardous</option>
-                    <option value="Fragile">Fragile</option>
-                    <option value="Heavy">Heavy</option>
-                    <option value="Bulk">Bulk</option>
-                    <option value="Liquid">Liquid</option>
-                    <option value="Palletized">Palletized</option>
+                    <option value="">Select type</option>
+                    <option value="Dry Van">Dry Van</option>
+                    <option value="Reefer">Reefer</option>
+                    <option value="Tarpauliner">Tarpauliner</option>
+                    <option value="Flatbed">Flatbed</option>
+                    <option value="Stepdeck">Stepdeck</option>
+                    <option value="Lowboy">Lowboy</option>
+                    <option value="Tanker">Tanker</option>
+                    <option value="Car Carrier">Car Carrier</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Weight (lbs) *
+                    Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={freightFormData.date}
+                    onChange={handleFreightChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Max Weight (kg) *
                   </label>
                   <input
                     type="number"
-                    name="weight"
-                    value={freightFormData.weight}
+                    name="maxWeight"
+                    value={freightFormData.maxWeight}
                     onChange={handleFreightChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
                     placeholder="10000"
@@ -539,33 +555,7 @@ function Dashboard() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pickup Date *
-                  </label>
-                  <input
-                    type="date"
-                    name="pickupDate"
-                    value={freightFormData.pickupDate}
-                    onChange={handleFreightChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Delivery Date
-                  </label>
-                  <input
-                    type="date"
-                    name="deliveryDate"
-                    value={freightFormData.deliveryDate}
-                    onChange={handleFreightChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Price ($)
+                    Price (€) *
                   </label>
                   <input
                     type="number"
@@ -574,20 +564,6 @@ function Dashboard() {
                     onChange={handleFreightChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
                     placeholder="5000"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    value={freightFormData.description}
-                    onChange={handleFreightChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
-                    rows="3"
-                    placeholder="Additional details about the freight..."
                   />
                 </div>
               </div>
