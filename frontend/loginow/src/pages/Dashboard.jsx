@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import { createTruck, getUserTrucks, updateTruck, deleteTruck } from '../services/truckServices';
-import { createFreight, getUserFreight, updateFreight, deleteFreight } from '../services/freightServices';
-import { createFreights } from '../../../../backend/src/controllers/freightController';
+import { getUserTrucks, updateTruck, deleteTruck } from '../services/truckServices';
+import { getUserFreight, updateFreight, deleteFreight } from '../services/freightServices';
 
 function Dashboard() {
   const [trucks, setTrucks] = useState([]);
@@ -63,8 +62,9 @@ function Dashboard() {
         getUserTrucks(),
         getUserFreight()
       ]);
-      setTrucks(trucksData);
-      setFreight(freightData);
+      // Filter out any items with missing required dates
+      setTrucks(trucksData.filter(t => t && t.dateAvailable));
+      setFreight(freightData.filter(f => f && f.pickupDate));
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to load data: ' + error.message });
     } finally {
@@ -88,13 +88,8 @@ function Dashboard() {
     }
 
     try {
-      if (editingTruck) {
-        await updateTruck(editingTruck.truckID, truckFormData);
-        setMessage({ type: 'success', text: 'Truck updated successfully! ✓' });
-      } else {
-        await createTruck(truckFormData);
-        setMessage({ type: 'success', text: 'Truck created successfully! ✓' });
-      }
+      await updateTruck(editingTruck.truckID, truckFormData);
+      setMessage({ type: 'success', text: 'Truck updated successfully! ✓' });
       
       setShowTruckModal(false);
       setEditingTruck(null);
@@ -108,7 +103,7 @@ function Dashboard() {
       });
       loadData();
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to save truck: ' + error.message });
+      setMessage({ type: 'error', text: 'Failed to update truck: ' + error.message });
     }
   };
 
@@ -117,7 +112,7 @@ function Dashboard() {
     setTruckFormData({
       currentLocation: truck.currentLocation,
       truckType: truck.truckType,
-      dateAvailable: truck.dateAvailable.split('T')[0],
+      dateAvailable: truck.dateAvailable ? truck.dateAvailable.split('T')[0] : '',
       maxWeight: truck.maxWeight,
       vanLength: truck.vanLength || '',
       width: truck.width || ''
@@ -132,19 +127,6 @@ function Dashboard() {
       name: `${truck.truckType} - ${truck.currentLocation}`
     });
     setShowDeleteModal(true);
-  };
-
-  const handleAddTruck = () => {
-    setEditingTruck(null);
-    setTruckFormData({
-      currentLocation: '',
-      truckType: 'Dry Van',
-      dateAvailable: '',
-      maxWeight: '',
-      vanLength: '',
-      width: ''
-    });
-    setShowTruckModal(true);
   };
 
   // ========== FREIGHT HANDLERS ==========
@@ -163,13 +145,8 @@ function Dashboard() {
     }
 
     try {
-      if (editingFreight) {
-        await updateFreight(editingFreight.freightID, freightFormData);
-        setMessage({ type: 'success', text: 'Freight updated successfully! ✓' });
-      } else {
-        await createFreights(freightFormData);
-        setMessage({ type: 'success', text: 'Freight created successfully! ✓' });
-      }
+      await updateFreight(editingFreight.freightID, freightFormData);
+      setMessage({ type: 'success', text: 'Freight updated successfully! ✓' });
       
       setShowFreightModal(false);
       setEditingFreight(null);
@@ -185,7 +162,7 @@ function Dashboard() {
       });
       loadData();
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to save freight: ' + error.message });
+      setMessage({ type: 'error', text: 'Failed to update freight: ' + error.message });
     }
   };
 
@@ -196,7 +173,7 @@ function Dashboard() {
       deliveryLocation: freight.deliveryLocation,
       freightType: freight.freightType,
       weight: freight.weight,
-      pickupDate: freight.pickupDate.split('T')[0],
+      pickupDate: freight.pickupDate ? freight.pickupDate.split('T')[0] : '',
       deliveryDate: freight.deliveryDate ? freight.deliveryDate.split('T')[0] : '',
       price: freight.price || '',
       description: freight.description || ''
@@ -211,21 +188,6 @@ function Dashboard() {
       name: `${freight.freightType} - ${freight.pickupLocation} to ${freight.deliveryLocation}`
     });
     setShowDeleteModal(true);
-  };
-
-  const handleAddFreight = () => {
-    setEditingFreight(null);
-    setFreightFormData({
-      pickupLocation: '',
-      deliveryLocation: '',
-      freightType: 'General',
-      weight: '',
-      pickupDate: '',
-      deliveryDate: '',
-      price: '',
-      description: ''
-    });
-    setShowFreightModal(true);
   };
 
   // ========== DELETE HANDLER ==========
@@ -288,16 +250,13 @@ function Dashboard() {
               <div className="bg-white rounded-lg shadow p-4">
                 <div className="flex justify-between items-center mb-3">
                   <h2 className="text-xl font-bold text-gray-800">Posted Trucks</h2>
-                  <button
-                    onClick={handleAddTruck}
-                    className="px-4 py-1.5 bg-[#7ED957] text-white text-sm font-medium rounded hover:bg-[#6bc245] transition-colors"
-                  >
-                    + Add
-                  </button>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-96 overflow-y-auto">
                   {trucks.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">No trucks posted yet</p>
+                    <div className="text-center py-12">
+                      <p className="text-gray-500 text-lg mb-2">No trucks posted yet</p>
+                      <p className="text-gray-400 text-sm">Go to "Post Truck" to create one</p>
+                    </div>
                   ) : (
                     trucks.map((truck) => (
                       <div key={truck.truckID} className="bg-gray-50 border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
@@ -306,7 +265,7 @@ function Dashboard() {
                             <p className="font-semibold text-gray-800">{truck.truckType}</p>
                             <p className="text-sm text-gray-600">📍 {truck.currentLocation}</p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Max Weight: {truck.maxWeight} lbs | Available: {truck.dateAvailable.split('T')[0]}
+                              Max Weight: {truck.maxWeight} lbs | Available: {truck.dateAvailable ? truck.dateAvailable.split('T')[0] : 'N/A'}
                             </p>
                           </div>
                           <div className="flex gap-1 ml-2">
@@ -334,16 +293,13 @@ function Dashboard() {
               <div className="bg-white rounded-lg shadow p-4">
                 <div className="flex justify-between items-center mb-3">
                   <h2 className="text-xl font-bold text-gray-800">Posted Freight</h2>
-                  <button
-                    onClick={handleAddFreight}
-                    className="px-4 py-1.5 bg-[#7ED957] text-white text-sm font-medium rounded hover:bg-[#6bc245] transition-colors"
-                  >
-                    + Add
-                  </button>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-96 overflow-y-auto">
                   {freight.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">No freight posted yet</p>
+                    <div className="text-center py-12">
+                      <p className="text-gray-500 text-lg mb-2">No freight posted yet</p>
+                      <p className="text-gray-400 text-sm">Go to "Post Freight" to create one</p>
+                    </div>
                   ) : (
                     freight.map((f) => (
                       <div key={f.freightID} className="bg-gray-50 border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
@@ -352,7 +308,7 @@ function Dashboard() {
                             <p className="font-semibold text-gray-800">{f.freightType}</p>
                             <p className="text-sm text-gray-600">📦 {f.pickupLocation} → {f.deliveryLocation}</p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Weight: {f.weight} lbs | Pickup: {f.pickupDate.split('T')[0]}
+                              Weight: {f.weight} lbs | Pickup: {f.pickupDate ? f.pickupDate.split('T')[0] : 'N/A'}
                             </p>
                           </div>
                           <div className="flex gap-1 ml-2">
@@ -389,13 +345,11 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Truck Modal */}
+      {/* Truck Edit Modal */}
       {showTruckModal && (
         <div className="fixed inset-0 bg-white bg-opacity-95 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl border-4 border-[#7ED957]">
-            <h3 className="text-2xl font-bold mb-6 text-gray-800">
-              {editingTruck ? 'Edit Truck' : 'Add New Truck'}
-            </h3>
+            <h3 className="text-2xl font-bold mb-6 text-gray-800">Edit Truck</h3>
             
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -496,7 +450,7 @@ function Dashboard() {
                 onClick={handleTruckSubmit}
                 className="px-6 py-2.5 bg-[#7ED957] text-white font-medium rounded-lg hover:bg-[#6bc245] transition-colors shadow-md"
               >
-                {editingTruck ? 'Update Truck' : 'Create Truck'}
+                Update Truck
               </button>
               <button
                 onClick={() => {
@@ -512,13 +466,11 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Freight Modal */}
+      {/* Freight Edit Modal */}
       {showFreightModal && (
         <div className="fixed inset-0 bg-white bg-opacity-95 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl border-4 border-[#7ED957]">
-            <h3 className="text-2xl font-bold mb-6 text-gray-800">
-              {editingFreight ? 'Edit Freight' : 'Add New Freight'}
-            </h3>
+            <h3 className="text-2xl font-bold mb-6 text-gray-800">Edit Freight</h3>
             
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -646,7 +598,7 @@ function Dashboard() {
                 onClick={handleFreightSubmit}
                 className="px-6 py-2.5 bg-[#7ED957] text-white font-medium rounded-lg hover:bg-[#6bc245] transition-colors shadow-md"
               >
-                {editingFreight ? 'Update Freight' : 'Create Freight'}
+                Update Freight
               </button>
               <button
                 onClick={() => {
@@ -667,7 +619,7 @@ function Dashboard() {
         <div className="fixed inset-0 bg-white bg-opacity-95 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl border-4 border-red-500">
             <h3 className="text-2xl font-bold mb-4 text-red-600">Confirm Delete</h3>
-            <p className="mb-6 text-gray-700">
+            <p className="mb-4 text-gray-700">
               Are you sure you want to delete this {deleteItem.type}?
             </p>
             <p className="mb-6 text-sm text-gray-600 font-semibold">
