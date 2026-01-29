@@ -2,7 +2,6 @@ import { createFreight, deleteFreight, getAllFreights, getUserFreights, updateFr
 import { createTruck, deleteTruck, getAllTrucks, getUserTrucks, updateTruck } from '../controllers/truckController.js';
 import { loginUser, registerUser } from '../controllers/userController.js';
 import { logoutUser, refreshAccessToken } from '../controllers/authController.js';
-import { createProfile, getUserProfiles, getProfile, updateProfile, deleteProfile } from '../controllers/profileController.js';
 
 
 import { authMiddleware } from '../middlewares/authMiddleware.js';
@@ -104,93 +103,6 @@ export async function handleRequest(req, res) {
             return;
         }
     }
-    // ========== PROFILE ROUTES ==========
-
-    // Create profile (protected)
-    if (req.method === 'POST' && req.url === '/api/profiles') {
-        try {
-            const body = await parseBody(req);
-            req.body = body;
-            await authMiddleware(req, res, async () => {
-                await createProfile(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in create profile route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
-
-    // Get user's profiles (protected)
-    if (req.method === 'GET' && req.url === '/api/profiles') {
-        try {
-            await authMiddleware(req, res, async () => {
-                await getUserProfiles(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in get profiles route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
-
-    // Get single profile (protected)
-    if (req.method === 'GET' && req.url.startsWith('/api/profiles/')) {
-        try {
-            const profileID = req.url.split('/')[3];
-            req.params = { profileID };
-            await authMiddleware(req, res, async () => {
-                await getProfile(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in get profile route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
-
-    // Update profile (protected)
-    if (req.method === 'PUT' && req.url.startsWith('/api/profiles/')) {
-        try {
-            const profileID = req.url.split('/')[3];
-            req.params = { profileID };
-            const body = await parseBody(req);
-            req.body = body;
-            await authMiddleware(req, res, async () => {
-                await updateProfile(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in update profile route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
-
-    // Delete profile (protected)
-    if (req.method === 'DELETE' && req.url.startsWith('/api/profiles/')) {
-        try {
-            const profileID = req.url.split('/')[3];
-            req.params = { profileID };
-            await authMiddleware(req, res, async () => {
-                await deleteProfile(req, res);
-            });
-            return;
-        } catch (error) {
-            console.error('Error in delete profile route:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
-            return;
-        }
-    }
-
     // ========== TRUCK ROUTES ==========
 
     // Create truck route (protected)
