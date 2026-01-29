@@ -224,14 +224,9 @@ function Dashboard() {
       <Navbar />
 
       <div className="flex-1 flex flex-col">
-        {/* Page Header */}
-        <div className="bg-white shadow-sm px-8 py-4 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        </div>
-
         {/* Success/Error Message */}
         {message.text && (
-          <div className="px-8 pt-4">
+          <div className="px-12 pt-6">
             <div className={`p-4 rounded-lg ${
               message.type === 'success' ? 'bg-green-100 border border-green-400 text-green-700' :
               'bg-red-100 border border-red-400 text-red-700'
@@ -242,44 +237,44 @@ function Dashboard() {
         )}
 
         {/* Content Area */}
-        <div className="flex-1 p-6">
-          <div className="ml-auto mr-8 max-w-5xl space-y-6">
+        <div className="flex-1 py-6 px-12">
+          <div className="space-y-6">
             
             {/* Two Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               {/* Posted Trucks Section */}
-              <div className="bg-white rounded-lg shadow p-4">
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-xl font-bold text-gray-800">Posted Trucks</h2>
+              <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-semibold text-black">Posted Trucks</h2>
                 </div>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-4 max-h-96 overflow-y-auto">
                   {trucks.length === 0 ? (
                     <div className="text-center py-12">
-                      <p className="text-gray-500 text-lg mb-2">No trucks posted yet</p>
-                      <p className="text-gray-400 text-sm">Go to "Post Truck" to create one</p>
+                      <p className="text-gray-600 text-lg mb-2">No trucks posted yet</p>
+                      <p className="text-gray-500 text-sm">Go to "Post Truck" to create one</p>
                     </div>
                   ) : (
                     trucks.map((truck) => (
-                      <div key={truck.truckID} className="bg-gray-50 border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
+                      <div key={truck.truckID} className="bg-white border-2 border-[#7ED957] rounded-lg p-6 hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-start mb-4">
                           <div className="flex-1">
-                            <p className="font-semibold text-gray-800">{truck.truckType}</p>
-                            <p className="text-sm text-gray-600">📍 {truck.currentLocation}</p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xl font-bold text-black mb-2">{truck.truckType}</p>
+                            <p className="text-base text-gray-700 mb-2">📍 {truck.currentLocation}</p>
+                            <p className="text-sm text-gray-600">
                               Max Weight: {truck.maxWeight} kg | Available: {truck.dateAvailable ? truck.dateAvailable.split('T')[0] : 'N/A'}
                             </p>
                           </div>
-                          <div className="flex gap-1 ml-2">
+                          <div className="flex gap-2 ml-4">
                             <button
                               onClick={() => handleTruckEdit(truck)}
-                              className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                              className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleTruckDelete(truck)}
-                              className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
+                              className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
                             >
                               Delete
                             </button>
@@ -292,37 +287,37 @@ function Dashboard() {
               </div>
 
               {/* Posted Freight Section */}
-              <div className="bg-white rounded-lg shadow p-4">
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-xl font-bold text-gray-800">Posted Freight</h2>
+              <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-semibold text-black">Posted Freight</h2>
                 </div>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-4 max-h-96 overflow-y-auto">
                   {freight.length === 0 ? (
                     <div className="text-center py-12">
-                      <p className="text-gray-500 text-lg mb-2">No freight posted yet</p>
-                      <p className="text-gray-400 text-sm">Go to "Post Freight" to create one</p>
+                      <p className="text-gray-600 text-lg mb-2">No freight posted yet</p>
+                      <p className="text-gray-500 text-sm">Go to "Post Freight" to create one</p>
                     </div>
                   ) : (
                     freight.map((f) => (
-                      <div key={f.freightID} className="bg-gray-50 border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
+                      <div key={f.freightID} className="bg-white border-2 border-[#7ED957] rounded-lg p-6 hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-start mb-4">
                           <div className="flex-1">
-                            <p className="font-semibold text-gray-800">{f.truckType}</p>
-                            <p className="text-sm text-gray-600">📦 {f.currentLocation} → {f.destination}</p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xl font-bold text-black mb-2">{f.truckType}</p>
+                            <p className="text-base text-gray-700 mb-2">📦 {f.currentLocation} → {f.destination}</p>
+                            <p className="text-sm text-gray-600">
                               Weight: {f.maxWeight} kg | Date: {f.dateAvailable ? f.dateAvailable.split('T')[0] : 'N/A'} | €{f.price}
                             </p>
                           </div>
-                          <div className="flex gap-1 ml-2">
+                          <div className="flex gap-2 ml-4">
                             <button
                               onClick={() => handleFreightEdit(f)}
-                              className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                              className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleFreightDelete(f)}
-                              className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
+                              className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
                             >
                               Delete
                             </button>
@@ -337,7 +332,7 @@ function Dashboard() {
             </div>
 
             {/* Coming Soon Banner */}
-            <div className="bg-[#7ED957] rounded-lg shadow p-12 text-center">
+            <div className="bg-[#7ED957] rounded-lg shadow-md p-12 text-center">
               <p className="text-3xl font-bold text-white">
                 Stay tuned, More is coming
               </p>
@@ -414,34 +409,6 @@ function Dashboard() {
                     onChange={handleTruckChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
                     placeholder="50000"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Van Length (ft)
-                  </label>
-                  <input
-                    type="number"
-                    name="vanLength"
-                    value={truckFormData.vanLength}
-                    onChange={handleTruckChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
-                    placeholder="53"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Width (ft)
-                  </label>
-                  <input
-                    type="number"
-                    name="width"
-                    value={truckFormData.width}
-                    onChange={handleTruckChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957]"
-                    placeholder="8.5"
                   />
                 </div>
               </div>
