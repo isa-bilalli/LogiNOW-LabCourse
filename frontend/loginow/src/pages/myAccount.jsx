@@ -16,6 +16,9 @@ function MyAccount() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   
+  // Success/Error messages
+  const [message, setMessage] = useState({ type: '', text: '' });
+  
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -28,6 +31,16 @@ function MyAccount() {
   useEffect(() => {
     loadProfile();
   }, []);
+
+  // Auto-hide message after 5 seconds
+  useEffect(() => {
+    if (message.text) {
+      const timer = setTimeout(() => {
+        setMessage({ type: '', text: '' });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   const loadProfile = async () => {
     try {
@@ -43,7 +56,7 @@ function MyAccount() {
       setFormData(userData);
       setOriginalData(userData);
     } catch (error) {
-      alert('Failed to load profile: ' + error.message);
+      setMessage({ type: 'error', text: 'Failed to load profile: ' + error.message });
     } finally {
       setLoading(false);
     }
@@ -60,46 +73,47 @@ function MyAccount() {
     try {
       await updateUserProfile(formData);
       setOriginalData(formData);
-      alert('Profile updated successfully!');
+      setMessage({ type: 'success', text: 'Profile updated successfully! ✓' });
     } catch (error) {
-      alert('Failed to update profile: ' + error.message);
+      setMessage({ type: 'error', text: 'Failed to update profile: ' + error.message });
     }
   };
 
   const handleCancel = () => {
     setFormData(originalData);
+    setMessage({ type: 'info', text: 'Changes cancelled' });
   };
 
   const handleChangePassword = async () => {
     // Validation
     if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-      alert('Please fill in all password fields');
+      setMessage({ type: 'error', text: 'Please fill in all password fields' });
       return;
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert('New passwords do not match');
+      setMessage({ type: 'error', text: 'New passwords do not match' });
       return;
     }
 
     if (passwordData.newPassword.length < 8) {
-      alert('Password must be at least 8 characters long');
+      setMessage({ type: 'error', text: 'Password must be at least 8 characters long' });
       return;
     }
 
     try {
       await changePassword(passwordData.currentPassword, passwordData.newPassword);
-      alert('Password changed successfully!');
+      setMessage({ type: 'success', text: 'Password changed successfully! ✓' });
       setShowPasswordModal(false);
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error) {
-      alert('Failed to change password: ' + error.message);
+      setMessage({ type: 'error', text: 'Failed to change password: ' + error.message });
     }
   };
 
   const handleDeleteAccount = async () => {
     if (!deletePassword) {
-      alert('Please enter your password');
+      setMessage({ type: 'error', text: 'Please enter your password' });
       return;
     }
 
@@ -109,11 +123,10 @@ function MyAccount() {
 
     try {
       await deleteAccount(deletePassword);
-      alert('Account deleted successfully');
       localStorage.removeItem('accessToken');
       window.location.href = '/login';
     } catch (error) {
-      alert('Failed to delete account: ' + error.message);
+      setMessage({ type: 'error', text: 'Failed to delete account: ' + error.message });
     }
   };
 
@@ -253,6 +266,17 @@ function MyAccount() {
                         Cancel
                       </button>
                     </div>
+
+                    {/* Success/Error Message */}
+                    {message.text && (
+                      <div className={`mt-4 p-4 rounded-lg ${
+                        message.type === 'success' ? 'bg-green-100 border border-green-400 text-green-700' :
+                        message.type === 'error' ? 'bg-red-100 border border-red-400 text-red-700' :
+                        'bg-blue-100 border border-blue-400 text-blue-700'
+                      }`}>
+                        <p className="font-medium">{message.text}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
