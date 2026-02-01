@@ -145,11 +145,6 @@ function MyAccount() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Page Header */}
-        <div className="bg-white shadow-sm px-8 py-6 border-b border-gray-200">
-          <h1 className="text-3xl font-bold text-gray-800">My Account</h1>
-        </div>
-
         {/* Content Area */}
         <div className="flex-1 p-8">
           <div className="max-w-4xl mx-auto">
@@ -157,7 +152,7 @@ function MyAccount() {
             <div className="bg-white rounded-lg shadow-md p-8">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
                 {/* Avatar */}
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="w-32 h-32 bg-gray-600 rounded-full flex items-center justify-center">
                     <div className="text-white text-5xl font-bold">
                       {formData.username.charAt(0).toUpperCase() || 'U'}

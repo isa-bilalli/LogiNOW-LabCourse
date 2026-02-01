@@ -1,20 +1,23 @@
-import { StrictMode } from 'react'
+import { StrictMode, lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import ProtectedRoute from './routes/ProtectedRoutes.jsx'
+
+//Landing Page eshte gjithmone e kerkuar ne hapje te aplikacionit, te tjeret jane faqe sekondare dhe nuk duhen menjehere.
+
 import LandingPage from './pages/LandingPage.jsx';
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import FindFreight from './pages/FindFreight.jsx';
-import PostFreight from './pages/PostFreight.jsx';
-import FindTruck from './pages/FindTruck.jsx';
-import PostTruck from './pages/PostTruck.jsx';
-import ForgotPassword from './pages/ForgotPassword.jsx';
-import MyAccount from './pages/MyAccount.jsx';
-import ErrorPage from './pages/ErrorPage.jsx';
+const Login = lazy(() => import('./pages/Login.jsx'));
+const Register = lazy(() => import('./pages/Register.jsx'));
+const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
+const FindFreight = lazy(() => import('./pages/FindFreight.jsx'));
+const PostFreight = lazy(() => import('./pages/PostFreight.jsx'))
+const FindTruck = lazy(() => import('./pages/FindTruck.jsx'));
+const PostTruck = lazy(() => import('./pages/PostTruck.jsx'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword.jsx'));
+const MyAccount = lazy(() => import('./pages/myAccount.jsx'));
+const ErrorPage = lazy(() => import('./pages/ErrorPage.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -44,8 +47,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <Suspense>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </Suspense>
   </StrictMode>,
 )
