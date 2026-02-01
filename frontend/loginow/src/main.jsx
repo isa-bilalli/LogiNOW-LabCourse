@@ -4,6 +4,7 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import ProtectedRoute from './routes/ProtectedRoutes.jsx'
+import AdminProtectedRoute from './routes/AdminProtectedRoute.jsx'
 
 //Landing Page eshte gjithmone e kerkuar ne hapje te aplikacionit, te tjeret jane faqe sekondare dhe nuk duhen menjehere.
 
@@ -17,6 +18,7 @@ const FindTruck = lazy(() => import('./pages/FindTruck.jsx'));
 const PostTruck = lazy(() => import('./pages/PostTruck.jsx'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword.jsx'));
 const MyAccount = lazy(() => import('./pages/myAccount.jsx'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'));
 const ErrorPage = lazy(() => import('./pages/ErrorPage.jsx'));
 
 const router = createBrowserRouter([
@@ -39,6 +41,13 @@ const router = createBrowserRouter([
           { path: "findtruck", element: <FindTruck /> },
           { path: "posttruck", element: <PostTruck /> },
           { path: "myaccount", element: <MyAccount /> },
+        ],
+      },
+      // Admin routes - kerkon autentifikim edhe Admin role
+      {
+        element: <AdminProtectedRoute />,
+        children: [
+          { path: "admin", element: <AdminDashboard /> },
         ],
       },
     ],

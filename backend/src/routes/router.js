@@ -104,19 +104,22 @@ export async function handleRequest(req, res) {
             return;
         }
     }
-    // Protected route example - Get current user info
-    if (req.method === 'GET' && req.url === '/api/me') {
+
+    // End point per verifikimin e statusit te adminit
+    if (req.method === 'GET' && req.url === '/api/verify-admin') {
         try {
             await authMiddleware(req, res, async () => {
-                // req.user is available here (set by authMiddleware)
+                const userRole = req.user.role || req.user.roleID;
+                const isAdmin = userRole === 2;
+                
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({
-                    user: req.user
+                    isAdmin: isAdmin
                 }));
             });
             return;
         } catch (error) {
-            console.error('Error in protected route:', error);
+            console.error('Error verifying admin status:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Internal server error' }));
             return;

@@ -1,7 +1,34 @@
 import { Link, NavLink } from 'react-router-dom';
-
+import { useAuth } from '../contexts/AuthContext';
+import { useState, useEffect } from 'react';
+import { verifyAdminStatus } from '../api.js';
 
 function Navbar() {
+  const { user, isAuthenticated } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    async function checkAdmin() {
+      if (!isAuthenticated || !user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      //test ne frontend
+      const localCheck = user?.role === 2 || user?.roleID === 2;
+      
+      if (localCheck) {
+        // verifikim ne backend
+        const result = await verifyAdminStatus();
+        setIsAdmin(result.ok && result.isAdmin);
+      } else {
+        setIsAdmin(false);
+      }
+    }
+
+    checkAdmin();
+  }, [user, isAuthenticated]);
+
   return (
     <nav className="bg-[#D9D9D9] w-50 min-h-screen flex flex-col items-center pt-4 px-4 select-none">
       <img src="/src/assets/LogiNOW_WHITE-removebg-preview.png" className="w-36 sm:w-40 md:w-44 h-auto mb-10" draggable={false} alt="Logo" loading='lazy'/>
@@ -12,6 +39,9 @@ function Navbar() {
         <NavLink to="/posttruck" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>Post Truck</NavLink>
         <NavLink to="/findtruck" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>Find Truck</NavLink>
         <NavLink to="/myaccount" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>My Account</NavLink>
+        {isAdmin && (
+          <NavLink to="/admin" className={({ isActive }) => `text-lg font-medium text-center py-2 px-4 rounded-lg transition-colors duration-100 text-white ${isActive ? "bg-[#7ED957]":"hover:bg-[#B4B4B4]"}`}>Admin</NavLink>
+        )}
       </div>
       <div className="mt-auto mb-6 w-full flex justify-center">
         <Link to="/" className="flex items-center space-x-2 hover:opacity-80"><img src="/src/assets/logout-Photoroom.png" className="w-16 h-16 object-contain" alt="Logout Icon" loading='lazy' draggable={false}/></Link>

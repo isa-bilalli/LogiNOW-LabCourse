@@ -106,6 +106,34 @@ export async function refreshAccessToken() {
 }
 
 
+export async function verifyAdminStatus() {
+  try {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      return { ok: false, isAdmin: false };
+    }
+
+    const response = await fetch(`${backendUrl}/api/verify-admin`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { ok: false, isAdmin: false };
+    }
+
+    return { ok: true, isAdmin: data.isAdmin === true };
+  } catch (err) {
+    return { ok: false, isAdmin: false };
+  }
+}
+
 export async function apiRequest(url, options = {}) {
   return fetch(`${backendUrl}${url}`, {
     ...options,
