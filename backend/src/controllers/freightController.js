@@ -148,6 +148,24 @@ export async function updateFreights(req, res) {
   }
 }
 
+export async function countFreight(req, res){
+  try{
+    const total = await Freight.countFreight();
+    res.writeHead(200, {'Content-Type':'application/json'})
+    res.end(JSON.stringify({
+      total:total
+    }))
+    return;
+  }catch(err){
+    console.log('Error', err);
+    res.writeHead(500,{'Content-Type':'application/json'});
+    res.end(JSON.stringify({
+      error:'Internal server error',
+      message:'Failed to  count freight'
+    }))
+  }
+}
+
 export async function deleteFreights(req, res) {
   try {
     const { freightID } = req.params;

@@ -94,6 +94,11 @@ class Freight {
     const [result] = await pool.execute(query, [freightID]);
     return result.affectedRows > 0;
   }
+  static async countFreight(){
+    const query = 'SELECT COUNT(*) AS total FROM freight'
+    const [rows] = await pool.execute(query);
+    return rows[0].total;
+  }
 }
 
 export default Freight;

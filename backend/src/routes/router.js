@@ -1,6 +1,6 @@
-import { createFreights, deleteFreights, getAllFreights, getUserFreights, updateFreights } from '../controllers/freightController.js';
-import { createTruck, deleteTruck, getAllTrucks, getUserTrucks, updateTruck } from '../controllers/truckController.js';
-import { loginUser, registerUser } from '../controllers/userController.js';
+import { createFreights, deleteFreights, getAllFreights, getUserFreights, updateFreights, countFreight } from '../controllers/freightController.js';
+import { createTruck, deleteTruck, getAllTrucks, getUserTrucks, updateTruck, countTrucks } from '../controllers/truckController.js';
+import { loginUser, registerUser, countUsers } from '../controllers/userController.js';
 import { logoutUser, refreshAccessToken } from '../controllers/authController.js';
 import { getUserProfile, updateUserProfile, changePassword, deleteAccount } from '../controllers/accountController.js'
 
@@ -16,6 +16,11 @@ export async function handleRequest(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true'); // Required for cookies
+
+  // Debug logging
+  if (req.url === '/api/countusers') {
+    console.log('Router: Received request for /api/countusers, method:', req.method);
+  }
 
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
@@ -126,6 +131,69 @@ export async function handleRequest(req, res) {
         }
     }
 
+    // Count users route (protected - admin only)
+    if (req.method === 'GET' && req.url === '/api/countusers') {
+        try {
+            await authMiddleware(req, res, async () => {
+                // Check if user is admin
+                const userRole = req.user.role || req.user.roleID;
+                if (userRole !== 2) {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Admin access required' }));
+                    return;
+                }
+                await countUsers(req, res);
+            });
+            return;
+        } catch (err) {
+            console.log('Error counting users', err);
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error: 'Internal server error'}));
+            return;
+        }
+    }
+
+    if(req.method ==='GET' && req.url ==='/api/counttrucks') {
+        try{
+            await authMiddleware(req, res, async() =>{
+                const userRole = req.user.role || req.user.roleID;
+                if (userRole !== 2) {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Admin access required' }));
+                    return;
+            }
+            await countTrucks(req,res);
+        })
+        return;
+        } catch(err) {
+            console.log('Error:', err)
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error: 'Internal server error'}));
+            return;
+        }
+    }
+
+    if(req.method ==='GET' && req.url ==='/api/countfreight') {
+        try{
+            await authMiddleware(req, res, async() => {
+                const userRole = req.user.role || req.user.roleID;
+                if (userRole !== 2) {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Admin access required' }));
+                    return;
+            }
+            await countFreight(req,res);
+            })
+            return;
+        } catch(err) {
+            console.error('Error', err)
+            res.writeHead(500, {'Content-Type': 'application/json'})
+            res.end(JSON.stringify({
+                error:'Internal server error',
+                message:'Unable to count freight'
+            }))
+        }
+    }
     // ========== ACCOUNT ROUTES ==========
     
     // Get user profile (protected)

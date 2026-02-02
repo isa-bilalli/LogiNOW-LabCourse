@@ -190,3 +190,20 @@ export async function loginUser(req, res){
     }));
   }
 }
+
+export async function countUsers(req, res){
+  try{
+    const total = await User.countUsers();
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({
+      total: total
+    }));
+  } catch(err) {
+    console.log('Error counting users', err);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      error: 'Internal server error',
+      message: 'Failed to count users'
+    }));
+  }
+}

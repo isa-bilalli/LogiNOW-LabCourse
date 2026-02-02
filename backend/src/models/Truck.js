@@ -90,6 +90,11 @@ class Truck {
     const [result] = await pool.execute(query, [truckID]);
     return result.affectedRows > 0;
   }
+  static async countTrucks(){
+    const query = 'SELECT COUNT(*) AS total FROM truck;'
+    const [rows] = await pool.execute(query);
+    return rows[0].total
+  }
 }
 
 export default Truck;

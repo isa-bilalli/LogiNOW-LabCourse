@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { verifyAdminStatus } from '../api.js';
 
 function Navbar() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -44,7 +44,13 @@ function Navbar() {
         )}
       </div>
       <div className="mt-auto mb-6 w-full flex justify-center">
-        <Link to="/" className="flex items-center space-x-2 hover:opacity-80"><img src="/src/assets/logout-Photoroom.png" className="w-16 h-16 object-contain" alt="Logout Icon" loading='lazy' draggable={false}/></Link>
+        <button 
+          onClick={logout}
+          className="flex items-center space-x-2 hover:opacity-80 cursor-pointer bg-transparent border-none p-0"
+          aria-label="Logout"
+        >
+          <img src="/src/assets/logout-Photoroom.png" className="w-16 h-16 object-contain" alt="Logout Icon" loading='lazy' draggable={false}/>
+        </button>
       </div>
     </nav>
   );

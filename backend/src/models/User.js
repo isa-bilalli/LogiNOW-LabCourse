@@ -82,6 +82,12 @@ class User {
     const user = await User.findByEmail(email);
     return user !== null;
   }
+
+  static async countUsers(){
+    const query = 'SELECT COUNT(*) AS total FROM users';
+    const [rows] = await pool.execute(query);
+    return rows[0].total;
+  }
 }
 
 export default User;

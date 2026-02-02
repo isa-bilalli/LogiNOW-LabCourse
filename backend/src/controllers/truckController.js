@@ -54,6 +54,24 @@ export async function createTruck(req, res) {
   }
 }
 
+export async function countTrucks(req,res){
+  try{
+    const total = await Truck.countTrucks();
+    res.writeHead(200, {'Content-Type': 'application/json'})
+    res.end(JSON.stringify({
+      total:total
+    }))
+    return;
+  }catch(err){
+    console.log('Error:', err);
+    res.writeHead(500,{'Content-Type' : 'application/json'})
+    res.end(JSON.stringify({
+      error:'Unexpected Error',
+      message:'Failed to count trucks'
+    }));
+  }
+}
+
 export async function getUserTrucks(req, res) {
   try {
     // userID merret nga req.user (nga authMiddleware)
