@@ -95,6 +95,12 @@ class Truck {
     const [rows] = await pool.execute(query);
     return rows[0].total
   }
+  // LEFT JOIN ne Truck & User table qe te kemi qasje ne username, edhe qe nese fshihet user, vlera do te jete vetem NULL ne username
+  static async getAllTrucks(){
+    const query = 'SELECT t.truckID, t.currentLocation, t.truckType, t.dateAvailable, u.username FROM truck t LEFT JOIN users u ON t.userID=u.userID';
+    const [rows] = await pool.execute(query);
+    return rows;
+  }
 }
 
 export default Truck;

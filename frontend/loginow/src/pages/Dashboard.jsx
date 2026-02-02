@@ -220,7 +220,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100 select-none">
       <Navbar />
 
       <div className="flex-1 flex flex-col">

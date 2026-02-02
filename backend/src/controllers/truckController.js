@@ -54,6 +54,23 @@ export async function createTruck(req, res) {
   }
 }
 
+export async function adminGetAllTrucks(req,res){
+  try{
+    const rows = await Truck.getAllTrucks();
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({
+      trucks: rows
+    }));
+  }catch(err){
+    console.log('Error fetching trucks', err);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      error: 'Internal server error',
+      message: 'Failed to fetch trucks'
+    }));
+  }
+}
+
 export async function countTrucks(req,res){
   try{
     const total = await Truck.countTrucks();
@@ -178,6 +195,16 @@ export async function deleteTruck(req, res) {
       return;
     }
 
+    //NESE ADMIN, Mos kontrollo nese i takon userit.
+    const userRole = req.user.role || req.user.roleID;
+    if(userRole === 2){
+      await Truck.delete(truckID);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        message: 'Truck deleted successfully'
+      }));
+      return;
+    }
     // Sigurohu që truck-u i takon user-it
     if (truck.userID !== req.user.userID) {
       res.writeHead(403, { 'Content-Type': 'application/json' });

@@ -166,6 +166,23 @@ export async function countFreight(req, res){
   }
 }
 
+export async function adminGetAllFreight(req, res){
+  try{
+    const rows = await Freight.adminGetAllFreight()
+    res.writeHead(200, {'Content-Type':'application/json'})
+    res.end(JSON.stringify({
+      freight:rows
+    }))
+  }catch(err){
+    console.log('Error:',err)
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      error: 'Internal server error',
+      message: 'Failed to fetch freight'
+    }));
+  }
+}
+
 export async function deleteFreights(req, res) {
   try {
     const { freightID } = req.params;
@@ -176,6 +193,16 @@ export async function deleteFreights(req, res) {
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         error: 'Freight not found'
+      }));
+      return;
+    }
+    // NESE Admin, mos kontrollo nese i takon Freight
+    const userRole = req.user.role || req.user.roleID;
+    if(userRole === 2){
+      await Freight.delete(freightID);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        message: 'Truck deleted successfully'
       }));
       return;
     }

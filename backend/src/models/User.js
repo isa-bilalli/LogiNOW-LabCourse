@@ -88,6 +88,11 @@ class User {
     const [rows] = await pool.execute(query);
     return rows[0].total;
   }
+  static async getAllUsers(){
+    const query = 'SELECT userID, username, email, roleID, createdAt FROM users';
+    const [rows] = await pool.execute(query);
+    return rows;
+  }
 }
 
 export default User;

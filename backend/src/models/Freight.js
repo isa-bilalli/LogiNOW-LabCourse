@@ -99,6 +99,11 @@ class Freight {
     const [rows] = await pool.execute(query);
     return rows[0].total;
   }
+  static async adminGetAllFreight(){
+    const query = 'SELECT f.freightID, f.currentLocation, f.truckType, f.dateAvailable, u.username FROM freight f LEFT JOIN users u ON f.userID=u.userID';
+    const [rows] = await pool.execute(query);
+    return rows;
+  }
 }
 
 export default Freight;

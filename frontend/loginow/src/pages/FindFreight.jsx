@@ -97,7 +97,7 @@ function FindFreight() {
     <div className="flex min-h-screen bg-gray-100">
       <Navbar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col select-none">
         <div className="flex-1 py-6 px-12">
           <div className="space-y-6">
             {/* Search Form Card */}

@@ -92,7 +92,7 @@ function FindTruck() {
           <div className="flex-1 py-6 px-12">
               <div className="space-y-6">
             {/* Search Form Card */}
-            <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8 mb-6">
+            <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8 mb-6 select-none">
               <h2 className="text-xl font-semibold text-gray-800 mb-6">Search Criteria</h2>
 
               <div className="space-y-6">
@@ -175,7 +175,7 @@ function FindTruck() {
 
             {/* Results Section */}
             {showResults && (
-              <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8">
+              <div className="bg-[#D9D9D9] rounded-lg shadow-md p-8 select-none">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold text-gray-800">
                     Available Trucks ({displayTrucks.length})
@@ -237,7 +237,7 @@ function FindTruck() {
 
             {/* Empty State */}
             {!showResults && (
-              <div className="bg-[#D9D9D9] rounded-lg shadow-md p-16 text-center">
+              <div className="bg-[#D9D9D9] rounded-lg shadow-md p-16 text-center select-none">
                 <div className="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 text-5xl">
                   🚚
                 </div>

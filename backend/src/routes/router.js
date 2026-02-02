@@ -1,6 +1,6 @@
-import { createFreights, deleteFreights, getAllFreights, getUserFreights, updateFreights, countFreight } from '../controllers/freightController.js';
-import { createTruck, deleteTruck, getAllTrucks, getUserTrucks, updateTruck, countTrucks } from '../controllers/truckController.js';
-import { loginUser, registerUser, countUsers } from '../controllers/userController.js';
+import { createFreights, deleteFreights, getAllFreights, getUserFreights, updateFreights, countFreight, adminGetAllFreight } from '../controllers/freightController.js';
+import { createTruck, deleteTruck, getAllTrucks, getUserTrucks, updateTruck, countTrucks, adminGetAllTrucks } from '../controllers/truckController.js';
+import { loginUser, registerUser, countUsers, getAllUsers, deleteUser} from '../controllers/userController.js';
 import { logoutUser, refreshAccessToken } from '../controllers/authController.js';
 import { getUserProfile, updateUserProfile, changePassword, deleteAccount } from '../controllers/accountController.js'
 
@@ -410,6 +410,26 @@ export async function handleRequest(req, res) {
         }
     }
 
+    if(req.method ==='GET' && req.url.startsWith('/api/adminGetAllFreight')){
+        try{
+            await authMiddleware(req, res, async() => {
+                const userRole = req.user.role || req.user.roleID;
+                if (userRole !== 2) {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Admin access required' }));
+                    return;
+                }
+                await adminGetAllFreight(req, res);
+            });
+            return;
+        }catch(err){
+            console.error('Error getting all freight:', err);
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error: 'Internal server error'}));
+            return;
+        }
+    }
+
     // Delete freight (protected)
     if (req.method === 'DELETE' && req.url.startsWith('/api/freights/')) {
         try {
@@ -423,6 +443,70 @@ export async function handleRequest(req, res) {
             console.error('Error in delete freight route:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Internal server error' }));
+            return;
+        }
+    }
+
+    // Get all users route (protected - admin only)
+    if(req.method === 'GET' && req.url === '/api/getAllUsers'){
+        try{
+            await authMiddleware(req, res, async() => {
+                const userRole = req.user.role || req.user.roleID;
+                if (userRole !== 2) {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Admin access required' }));
+                    return;
+                }
+                await getAllUsers(req, res);
+            });
+            return;
+        }catch(err){
+            console.error('Error getting all users:', err);
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error: 'Internal server error'}));
+            return;
+        }
+    }
+
+    // Delete user route (protected - admin only)
+    if(req.method === 'DELETE' && req.url.startsWith('/api/users/')) {
+        try{
+            const userID = req.url.split('/')[3];
+            req.params = { userID };
+            await authMiddleware(req, res, async() => {
+                const userRole = req.user.role || req.user.roleID;
+                if (userRole !== 2) {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Admin access required' }));
+                    return;
+                }
+                await deleteUser(req, res);
+            });
+            return;
+        }catch(err){
+            console.error('Error deleting user:', err);
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error: 'Internal server error'}));
+            return;
+        }
+    }
+
+    if(req.method === 'GET' && req.url.startsWith('/api/getAllTrucks')){
+        try{
+            await authMiddleware(req, res, async() => {
+                const userRole = req.user.role || req.user.roleID;
+                if (userRole !== 2) {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Admin access required' }));
+                    return;
+                }
+                await adminGetAllTrucks(req, res);
+            });
+            return;
+        }catch(err){
+            console.error('Error getting all trucks:', err);
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error: 'Internal server error'}));
             return;
         }
     }
