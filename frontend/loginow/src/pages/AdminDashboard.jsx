@@ -19,6 +19,10 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [trucks, setTrucks] = useState([]);
   const [freight, setFreight] = useState([]);
+  
+  // Delete Confirmation Modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteItem, setDeleteItem] = useState({ type: '', id: null, name: '' });
   // Refresh data when component mounts or when user navigates to this page
   useEffect(() => {
     countUsers();
@@ -62,13 +66,19 @@ function AdminDashboard() {
     }
   }
 
-  async function handleDeleteUser(userID){
-    if (!window.confirm('Are you sure you want to delete this user?')) {
-      return;
-    }
+  function handleDeleteUser(userID){
+    const user = users.find(u => u.userID === userID);
+    setDeleteItem({
+      type: 'user',
+      id: userID,
+      name: user ? `${user.username} (${user.email})` : `User ID: ${userID}`
+    });
+    setShowDeleteModal(true);
+  }
 
+  async function confirmDeleteUser(){
     try{
-      const response = await fetch(`http://localhost:3000/api/users/${userID}`,{
+      const response = await fetch(`http://localhost:3000/api/users/${deleteItem.id}`,{
         method:'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -79,17 +89,25 @@ function AdminDashboard() {
       
       if(response.ok){
         // Remove user from list
-        setUsers(users.filter(user => user.userID !== userID));
-        // Update count
+        setUsers(users.filter(user => user.userID !== deleteItem.id));
+        // Update counts (user deletion cascades to trucks and freight)
         countUsers();
+        countTrucks();
+        countFreight();
+        setShowDeleteModal(false);
+        setDeleteItem({ type: '', id: null, name: '' });
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
         console.error('Failed to delete user:', errorData);
         alert('Failed to delete user: ' + (errorData.error || 'Unknown error'));
+        setShowDeleteModal(false);
+        setDeleteItem({ type: '', id: null, name: '' });
       }
     } catch(err){
       console.log('Error deleting user:', err);
       alert('Error deleting user');
+      setShowDeleteModal(false);
+      setDeleteItem({ type: '', id: null, name: '' });
     }
   }
   
@@ -122,23 +140,33 @@ function AdminDashboard() {
     }
   }
 
-  async function handleDeleteTruck(truckID){
-    if (!window.confirm('Are you sure you want to delete this truck?')) {
-      return;
-    }
+  function handleDeleteTruck(truckID){
+    const truck = trucks.find(t => t.truckID === truckID);
+    setDeleteItem({
+      type: 'truck',
+      id: truckID,
+      name: truck ? `Truck ID: ${truckID} - ${truck.truckType} (${truck.currentLocation})` : `Truck ID: ${truckID}`
+    });
+    setShowDeleteModal(true);
+  }
 
+  async function confirmDeleteTruck(){
     try{
-      const response = await deleteTruck(truckID);
+      const response = await deleteTruck(deleteItem.id);
       
       if(response){
         // Remove truck from list
-        setTrucks(trucks.filter(truck => truck.truckID !== truckID));
+        setTrucks(trucks.filter(truck => truck.truckID !== deleteItem.id));
         // Update count
         countTrucks();
+        setShowDeleteModal(false);
+        setDeleteItem({ type: '', id: null, name: '' });
       }
     }catch(err){
       console.log('Error deleting truck:', err);
       alert('Failed to delete truck: ' + (err.message || 'Unknown error'));
+      setShowDeleteModal(false);
+      setDeleteItem({ type: '', id: null, name: '' });
     }
   }
   async function handleFreightClick(){
@@ -170,22 +198,32 @@ function AdminDashboard() {
     }
   }
 
-  async function handleDeleteFreight(freightID){
-    if (!window.confirm('Are you sure you want to delete this freight?')) {
-      return;
-    }
+  function handleDeleteFreight(freightID){
+    const freightItem = freight.find(f => f.freightID === freightID);
+    setDeleteItem({
+      type: 'freight',
+      id: freightID,
+      name: freightItem ? `Freight ID: ${freightID} - ${freightItem.truckType} (${freightItem.currentLocation})` : `Freight ID: ${freightID}`
+    });
+    setShowDeleteModal(true);
+  }
 
+  async function confirmDeleteFreight(){
     try{
-      const res = await deleteFreight(freightID);
+      const res = await deleteFreight(deleteItem.id);
       if(res){
         // Remove freight from list
-        setFreight(freight.filter(f => f.freightID !== freightID));
+        setFreight(freight.filter(f => f.freightID !== deleteItem.id));
         // Update count
         countFreight();
+        setShowDeleteModal(false);
+        setDeleteItem({ type: '', id: null, name: '' });
       }
     }catch(err){
       console.log('Error deleting freight:', err);
       alert('Failed to delete freight: ' + (err.message || 'Unknown error'));
+      setShowDeleteModal(false);
+      setDeleteItem({ type: '', id: null, name: '' });
     }
   }
 
@@ -428,6 +466,49 @@ function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-white bg-opacity-95 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl border-4 border-red-500">
+            <h3 className="text-2xl font-bold mb-4 text-red-600">Confirm Delete</h3>
+            <p className="mb-4 text-gray-700">
+              Are you sure you want to delete this {deleteItem.type}?
+            </p>
+            <p className="mb-6 text-sm text-gray-600 font-semibold">
+              {deleteItem.name}
+            </p>
+            <p className="mb-6 text-sm text-red-600">
+              ⚠️ This action cannot be undone!
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => {
+                  if (deleteItem.type === 'user') {
+                    confirmDeleteUser();
+                  } else if (deleteItem.type === 'truck') {
+                    confirmDeleteTruck();
+                  } else if (deleteItem.type === 'freight') {
+                    confirmDeleteFreight();
+                  }
+                }}
+                className="px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteItem({ type: '', id: null, name: '' });
+                }}
+                className="px-6 py-2.5 bg-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
